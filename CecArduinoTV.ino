@@ -123,52 +123,36 @@ void loop()
   {
 
     unsigned char c = Serial.read();
-    unsigned char buffer[3];
 
     detachInterrupt(0);
 
     switch (c)
     {
       case '1':
-        buffer[0] = CEC_STANDBY;
-        device.TransmitFrame(4, buffer, 1);
+        device.TransmitMsg(4, CEC_STANDBY);
         break;
       case '2':
-        buffer[0] = CEC_INFO_REQ_PHYS_ADDR;
-        device.TransmitFrame(4, buffer, 1);
+        device.TransmitMsg(4, CEC_INFO_REQ_PHYS_ADDR);
         break;
       case '3':
-        buffer[0] = CEC_POWER_REQ_STATUS;
-        device.TransmitFrame(4, buffer, 1);
+        device.TransmitMsg(4, CEC_POWER_REQ_STATUS);
+        break;
+      case 'r':
+        device.TransmitMsg(5, CEC_AUDIO_MODE_REQ, 0x11, 0x00);
         break;
       case 'u':
-        buffer[0] = CEC_AUDIO_MODE_REQ;
-        buffer[1] = 0x11;
-        buffer[2] = 0;
-        device.TransmitFrame(5, buffer, 3);
-        break;
-      case 'i':
-        buffer[0] = CEC_MENU_UC_PRESSED;
-        buffer[1] = 0x41;
-        device.TransmitFrame(5, buffer, 2);
-        break;
-      case 'o':
-        buffer[0] = CEC_MENU_UC_RELEASED;
-        device.TransmitFrame(5, buffer, 1);
+        device.TransmitMsg(5, CEC_MENU_UC_PRESSED, 0x41);
+        device.TransmitMsg(5, CEC_MENU_UC_RELEASED);
         break;
       case 'p':
-        buffer[0]=CEC_ROUTING_REQ_PATH;
-        buffer[1]=0x20;
-        buffer[2]=0;
-        device.TransmitFrame(0xf, buffer, 3);
+        device.TransmitMsg(0xf, CEC_ROUTING_REQ_PATH, 0x20, 0x00);
         break;
       case 'a':
-        buffer[0]=CEC_ROUTING_REQ_ACTIVE;
-        device.TransmitFrame(0xf, buffer, 1);
+        device.TransmitMsg(0xf, CEC_ROUTING_REQ_ACTIVE);
         break;
       case 't':
-        buffer[0] = 0;
-        DbgPrint("ping: %d", device.TransmitFrame(0x4, buffer, 0));
+        unsigned char buffer[] = {0};
+        DbgPrint("ping: %d", device.TransmitWait(0x4, buffer, 0));
         break;
       case 'e':
         DbgPrint("read edid: %d", readEDID());
