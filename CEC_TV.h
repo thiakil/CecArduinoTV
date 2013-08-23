@@ -19,3 +19,12 @@ protected:
     void powerOff(){}
     byte testTVVoltage(){return CEC_POWER_STATUS_STANDBY;}
 };
+
+class CEC_LogicalDeviceState
+{
+public:
+    byte powerStatus;
+    short physicalAddress;
+    byte menuStatus;
+    
+};
