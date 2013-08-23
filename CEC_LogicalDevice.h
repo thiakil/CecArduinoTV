@@ -21,6 +21,12 @@ public:
 
 	virtual void Run();
 	virtual bool TransmitFrame(int targetAddress, unsigned char* buffer, int count);
+	virtual bool TransmitWait(int targetAddress, unsigned char* buffer, int count);
+	virtual bool TransmitMsg(int targetAddress, unsigned char message);
+	virtual bool TransmitMsg(int targetAddress, unsigned char message, unsigned char param1);
+	virtual bool TransmitMsg(int targetAddress, unsigned char message, unsigned char param1, unsigned char param2);
+	virtual bool TransmitMsg(int targetAddress, unsigned char message, unsigned char param1, unsigned char param2, unsigned char param3);
+	virtual bool TransmitMsg(int targetAddress, unsigned char message, unsigned char param1, unsigned char param2, unsigned char param3, unsigned char param4);
     virtual unsigned char getLogical();
     virtual int getPhysical();
     
@@ -80,6 +86,9 @@ private:
 	CEC_PRIMARY_STATE _primaryState;
 	CEC_SECONDARY_STATE _secondaryState;
 	int _tertiaryState;
+
+	bool _waitingTransmit;
+	bool _transmitResult;
 
 };
 

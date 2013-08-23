@@ -1,5 +1,4 @@
 #include "CEC_LogicalDevice.h"
-#include "packetserial.h"
 
 int CEC_LogicalDevice::_validLogicalAddresses[6][5] =
 	{	{CLA_TV,					CLA_FREE_USE,			CLA_UNREGISTERED,		CLA_UNREGISTERED,	CLA_UNREGISTERED,	},
@@ -21,6 +20,7 @@ CEC_LogicalDevice::CEC_LogicalDevice(int physicalAddress)
 , _waitTime(0)
 , _primaryState(CEC_ALLOCATE_LOGICAL_ADDRESS)
 , _deviceType(CDT_OTHER)
+,_waitingTransmit(0)
 {
 	_secondaryState = CEC_XMIT_POLLING_MESSAGE;
 	_tertiaryState = 0;
@@ -134,6 +134,50 @@ bool CEC_LogicalDevice::TransmitFrame(int targetAddress, unsigned char* buffer, 
 	return Transmit(buffer, count);
 }
 
+bool CEC_LogicalDevice::TransmitWait(int targetAddress, unsigned char* buffer, int count)
+{
+	while (_waitingTransmit){
+		Run();
+	}
+	_waitingTransmit = true;
+	_transmitResult = false;
+	if (!TransmitFrame(targetAddress, buffer, count))
+	{
+		_waitingTransmit = false;
+		return false;
+	}
+	while (_waitingTransmit){
+		Run();
+	}
+	return _transmitResult;
+}
+
+bool CEC_LogicalDevice::TransmitMsg(int targetAddress, unsigned char message)
+{
+	unsigned char buffer[] = { message, };
+	return TransmitWait(targetAddress, buffer, 1);
+}
+bool CEC_LogicalDevice::TransmitMsg(int targetAddress, unsigned char message, unsigned char param1)
+{
+	unsigned char buffer[] = { message, param1};
+	return TransmitWait(targetAddress, buffer, 2);
+}
+bool CEC_LogicalDevice::TransmitMsg(int targetAddress, unsigned char message, unsigned char param1, unsigned char param2)
+{
+	unsigned char buffer[] = { message, param1, param2};
+	return TransmitWait(targetAddress, buffer, 3);
+}
+bool CEC_LogicalDevice::TransmitMsg(int targetAddress, unsigned char message, unsigned char param1, unsigned char param2, unsigned char param3)
+{
+	unsigned char buffer[] = { message, param1, param2, param3};
+	return TransmitWait(targetAddress, buffer, 4);
+}
+bool CEC_LogicalDevice::TransmitMsg(int targetAddress, unsigned char message, unsigned char param1, unsigned char param2, unsigned char param3, unsigned char param4)
+{
+	unsigned char buffer[] = { message, param1, param2, param3, param4};
+	return TransmitWait(targetAddress, buffer, 5);
+}
+
 void CEC_LogicalDevice::OnTransmitComplete(bool success)
 {
 	if (_primaryState == CEC_ALLOCATE_LOGICAL_ADDRESS &&
@@ -143,8 +187,11 @@ void CEC_LogicalDevice::OnTransmitComplete(bool success)
 		while (!ProcessStateMachine(&success))
 			;
 	}
-        else
+        else {
           DbgPrint("Transmit: %d\r\n", success);
+          _waitingTransmit = false;
+		  _transmitResult = success;
+        }
 }
 
 void CEC_LogicalDevice::Run()
