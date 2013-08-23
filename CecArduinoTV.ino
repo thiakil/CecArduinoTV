@@ -1,12 +1,11 @@
 #include "CEC_Device.h"
 #include "CEC_Codes.h"
+#include "CEC_TV.h"
 //#include "cli.h"
 #include <Wire.h>
 #include "edid.h"
 #include "MemoryFree.h"
-#include "packetserial.h"
-#include "status.h"
-#include "cmdcodes.h"
+
 #define IN_LINE 2
 #define OUT_LINE 3
 //#define HOTPLUG 4
@@ -51,17 +50,6 @@ void set_led(byte led, bool on){
   }
   digitalWrite(pin, on ? HIGH : LOW);
   }
-
-void handle_packet(byte* payload, byte length){
-  //send_mem_status();
-  if (payload[0] == REQ_ADD){
-    send_addr(device.getPhysical(), device.getLogical());
-  }
-  if (payload[0] == SEND_PACKET){
-    //read target addr from packet
-    device.TransmitFrame(payload[2], &payload[3], length -3);
-  }
-}
 
 bool XX_GetLineState()
 {
@@ -114,7 +102,7 @@ void setup()
   digitalWrite(LED1, HIGH);
   Serial.println("ready");
 
-  unsigned char buffer[4];
+  /*unsigned char buffer[4];
 
     buffer[0] = CEC_ROUTING_CHANGED;
     buffer[1] = 0x00;
@@ -122,7 +110,7 @@ void setup()
     buffer[3] = 0x20;
     buffer[4] = 0;
     device.TransmitFrame(15, buffer, 5);
-    Serial.println("transmitted");
+    Serial.println("transmitted");*/
 
 
   attachInterrupt(0, inputinterrupt,CHANGE);
