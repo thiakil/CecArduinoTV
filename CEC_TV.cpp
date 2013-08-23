@@ -77,16 +77,16 @@ void debugReceivedMsg(int source, int dest, unsigned char* buffer, int count){
             for (int i = 1; i < count; i++)
             DbgPrint("%02X ", buffer[i]);
             DbgPrint("\r\n");
-        } else {
-            DbgPrint("Ping \r\n");
-        }
+        } 
+    } else {
+        debugPrint("Ping \r\n");
     }
 }
 
 void CEC_TV::OnReceive(int source, int dest, unsigned char* buffer, int count){
     #ifdef #DEBUG_CODES
         debugReceivedMsg(source, dest, buffer, count);
-    #endif//#DEBUG_CODES
+    #endif //#DEBUG_CODES
 
     if (count && (source == _logicalAddress || source == CEC_BROADCAST)){
         switch(buffer[0]){
