@@ -7,14 +7,15 @@ public:
   CEC_TV():CEC_Device(0){
       Promiscuous = true; //Relay all line traffic
       Initialize(CEC_LogicalDevice::CDT_TV);
+      _powerStatus = testTVVoltage();
   };
   virtual ~CEC_TV(){};
 
 protected:
     virtual void OnReceive(int source, int dest, unsigned char* buffer, int count);
 
-    byte powerStatus;
+    byte _powerStatus;
     void powerOn(){}
     void powerOff(){}
-    bool testTVVoltage(){return false;}
+    byte testTVVoltage(){return CEC_POWER_STATUS_STANDBY;}
 };

@@ -103,6 +103,8 @@ void CEC_TV::OnReceive(int source, int dest, unsigned char* buffer, int count){
                 break;
             case CEC_INFO_REQ_PHYS_ADDR:
                 TransmitMsg(source, CEC_INFO_PHYS_ADDR, _physicalAddress >> 8, _physicalAddress & 0xFF, _deviceType);
+            case CEC_POWER_REQ_STATUS:
+                TransmitMsg(source, CEC_POWER_STATUS, _powerStatus);
             case CEC_ROUTING_ACTIVE:
             case CEC_MENU_STATUS:
                 break;
