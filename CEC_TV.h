@@ -12,4 +12,9 @@ public:
 
 protected:
     virtual void OnReceive(int source, int dest, unsigned char* buffer, int count);
+
+    byte powerStatus;
+    void powerOn(){}
+    void powerOff(){}
+    bool testTVVoltage(){return false;}
 };

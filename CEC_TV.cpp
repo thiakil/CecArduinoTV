@@ -3,10 +3,11 @@
 
 #include "CEC_TV.h"
 
-void CEC_TV::OnReceive(int source, int dest, unsigned char* buffer, int count){
+void debugReceivedMsg(int source, int dest, unsigned char* buffer, int count){
     DbgPrint("%d -> %d (%d): ", source, dest, count);
     if (count){
         switch(buffer[0]){
+            #ifdef #DEBUG_CODES
             case CEC_FEATURE_ABORT: DbgPrint("CEC_FEATURE_ABORT\r\n"); break;
             case CEC_OTP_IMAGE_ON: DbgPrint("CEC_OTP_IMAGE_ON\r\n"); break;
             //case CEC_TUNER_UP: DbgPrint("CEC_TUNER_UP\r\n"); break;
@@ -41,7 +42,7 @@ void CEC_TV::OnReceive(int source, int dest, unsigned char* buffer, int count){
 //                case CEC_AUDIO_MODE: DbgPrint("CEC_AUDIO_MODE\r\n"); break;
             case CEC_ROUTING_CHANGED: DbgPrint("CEC_ROUTING_CHANGED\r\n"); break;
             case CEC_ROUTING_INFO: DbgPrint("CEC_ROUTING_INFO\r\n"); break;
-            case CEC_OTP_ACTIVE_SRC: DbgPrint("CEC_OTP_ACTIVE_SRC\r\n"); break;
+            case CEC_ROUTING_ACTIVE: DbgPrint("CEC_ROUTING_ACTIVE\r\n"); break;
             case CEC_INFO_REQ_PHYS_ADDR: DbgPrint("CEC_INFO_REQ_PHYS_ADDR\r\n"); break;
             case CEC_INFO_PHYS_ADDR: DbgPrint("CEC_INFO_PHYS_ADDR\r\n"); break;
             case CEC_ROUTING_REQ_ACTIVE: DbgPrint("CEC_ROUTING_REQ_ACTIVE\r\n"); break;
@@ -69,6 +70,7 @@ void CEC_TV::OnReceive(int source, int dest, unsigned char* buffer, int count){
             case CEC_VENDOR_COMMAND_ID: DbgPrint("CEC_VENDOR_COMMAND_ID\r\n"); break;
             case CEC_TIMER_CLEAR_EXTERNAL: DbgPrint("CEC_TIMER_CLEAR_EXTERNAL\r\n"); break;
             case CEC_TIMER_SET_EXTERNAL: DbgPrint("CEC_TIMER_SET_EXTERNAL\r\n"); break;
+            #endif//#DEBUG_CODES
             default: DbgPrint("unknown (%d)\r\n", buffer[0]); break;
         }
         if (count > 1) {
@@ -77,6 +79,37 @@ void CEC_TV::OnReceive(int source, int dest, unsigned char* buffer, int count){
             DbgPrint("\r\n");
         } else {
             DbgPrint("Ping \r\n");
+        }
+    }
+}
+
+void CEC_TV::OnReceive(int source, int dest, unsigned char* buffer, int count){
+    #ifdef #DEBUG_CODES
+        debugReceivedMsg(source, dest, buffer, count);
+    #endif//#DEBUG_CODES
+
+    if (count && (source == _logicalAddress || source == CEC_BROADCAST)){
+        switch(buffer[0]){
+            case CEC_OTP_IMAGE_ON:
+            case CEC_OTP_TEXT_ON:
+                powerOn();
+                break;
+            case CEC_STANDBY:
+                powerOff();
+                break;
+            case CEC_INFO_VERSION_REQ:
+                TransmitMsg(source, CEC_INFO_VERSION, 0x04);//hdmi 1.3a
+            case CEC_INFO_VERSION: 
+                break;
+            case CEC_INFO_REQ_PHYS_ADDR:
+                TransmitMsg(source, CEC_INFO_PHYS_ADDR, _physicalAddress >> 8, _physicalAddress & 0xFF, _deviceType);
+            case CEC_ROUTING_ACTIVE:
+            case CEC_MENU_STATUS:
+                break;
+            default:
+                if (dest == _logicalAddress)//dont wanna do for bcast
+                    TransmitMsg(source, CEC_FEATURE_ABORT, CEC_ABORT_UNRECOGNIZED);
+                break;
         }
     }
 }
