@@ -142,7 +142,7 @@ void loop()
         device.TransmitMsg(5, CEC_AUDIO_MODE_REQ, 0x11, 0x00);
         break;
       case 'u':
-        device.TransmitMsg(5, CEC_MENU_UC_PRESSED, 0x41);
+        device.TransmitMsg(5, CEC_MENU_UC_PRESSED, CEC_UC_CODE_VOLUME_UP);
         device.TransmitMsg(5, CEC_MENU_UC_RELEASED);
         break;
       case 'p':
@@ -152,11 +152,32 @@ void loop()
         device.TransmitMsg(0xf, CEC_ROUTING_REQ_ACTIVE);
         break;
       case 't':
-        unsigned char buffer[] = {0};
-        DbgPrint("ping: %d", device.TransmitWait(0x4, buffer, 0));
-        break;
+          {
+              unsigned char buffer[] = {0};
+              DbgPrint("ping: %d", device.TransmitWait(0x4, buffer, 0));
+              break;
+          }
       case 'e':
         DbgPrint("read edid: %d", readEDID());
+        break;
+      case '8':
+        device.TransmitMsg(4, CEC_MENU_UC_PRESSED, CEC_UC_CODE_UP);
+        device.TransmitMsg(4, CEC_MENU_UC_RELEASED);
+        break;
+      case '4':
+        device.TransmitMsg(4, CEC_MENU_UC_PRESSED, CEC_UC_CODE_LEFT);
+        device.TransmitMsg(4, CEC_MENU_UC_RELEASED);
+        break;
+      case '6':
+        device.TransmitMsg(4, CEC_MENU_UC_PRESSED, CEC_UC_CODE_RIGHT);
+        device.TransmitMsg(4, CEC_MENU_UC_RELEASED);
+        break;
+      case '5':
+        device.TransmitMsg(4, CEC_MENU_UC_PRESSED, CEC_UC_CODE_DOWN);
+        device.TransmitMsg(4, CEC_MENU_UC_RELEASED);
+        break;
+      case 'n':
+        device.TransmitMsg(4, CEC_OSD_REQ_OSD);
         break;
     }
   }
