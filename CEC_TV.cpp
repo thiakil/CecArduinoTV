@@ -1,13 +1,15 @@
 #ifndef CEC_TV_H__
 #define CEC_TV_H__
 
+#define DEBUG_CODES
+
 #include "CEC_TV.h"
 
 void debugReceivedMsg(int source, int dest, unsigned char* buffer, int count){
     DbgPrint("%d -> %d (%d): ", source, dest, count);
     if (count){
         switch(buffer[0]){
-            #ifdef #DEBUG_CODES
+            #ifdef DEBUG_CODES
             case CEC_FEATURE_ABORT: DbgPrint("CEC_FEATURE_ABORT\r\n"); break;
             case CEC_OTP_IMAGE_ON: DbgPrint("CEC_OTP_IMAGE_ON\r\n"); break;
             //case CEC_TUNER_UP: DbgPrint("CEC_TUNER_UP\r\n"); break;
@@ -77,18 +79,18 @@ void debugReceivedMsg(int source, int dest, unsigned char* buffer, int count){
             for (int i = 1; i < count; i++)
             DbgPrint("%02X ", buffer[i]);
             DbgPrint("\r\n");
-        } 
+        }
     } else {
-        debugPrint("Ping \r\n");
+        DbgPrint("Ping \r\n");
     }
 }
 
 void CEC_TV::OnReceive(int source, int dest, unsigned char* buffer, int count){
-    #ifdef #DEBUG_CODES
+    #ifdef DEBUG_CODES
         debugReceivedMsg(source, dest, buffer, count);
     #endif //#DEBUG_CODES
 
-    if (count && (source == _logicalAddress || source == CEC_BROADCAST)){
+    if (count && (dest == _logicalAddress || dest == CEC_BROADCAST)){
         switch(buffer[0]){
             case CEC_OTP_IMAGE_ON:
             case CEC_OTP_TEXT_ON:
@@ -98,22 +100,77 @@ void CEC_TV::OnReceive(int source, int dest, unsigned char* buffer, int count){
                 powerOff();
                 break;
             case CEC_INFO_VERSION_REQ:
-                TransmitMsg(source, CEC_INFO_VERSION, 0x04);//hdmi 1.3a
-            case CEC_INFO_VERSION: 
+                TransmitMsgQ(source, CEC_INFO_VERSION, 0x04);//hdmi 1.3a
+            case CEC_INFO_VERSION:
                 break;
             case CEC_INFO_REQ_PHYS_ADDR:
-                TransmitMsg(source, CEC_INFO_PHYS_ADDR, _physicalAddress >> 8, _physicalAddress & 0xFF, _deviceType);
-            case CEC_POWER_REQ_STATUS:
-                TransmitMsg(source, CEC_POWER_STATUS, _powerStatus);
-            case CEC_ROUTING_ACTIVE:
-            case CEC_MENU_STATUS:
+                TransmitMsgQ(source, CEC_INFO_PHYS_ADDR, _physicalAddress >> 8, _physicalAddress & 0xFF, _deviceType);
                 break;
+            case CEC_POWER_REQ_STATUS:
+                DbgPrint("status requested\r\n");
+                TransmitMsgQ(source, CEC_POWER_STATUS, _powerStatus);
+                DbgPrint("status sent\r\n");
+                break;
+            case CEC_ROUTING_ACTIVE:
+                DbgPrint("TODO: change input\r\n");
+                TransmitMsgQ(source, CEC_OSD_REQ_OSD);
+                break;
+            case CEC_ROUTING_INACTIVE:
+                TransmitMsgQ(CEC_BROADCAST, CEC_ROUTING_REQ_ACTIVE);
+                break;
+            case CEC_MENU_STATUS:
+                if (buffer[1] == CEC_MENU_STATUS_ACTIVATED)
+                    _sendUCTo = source;
+                else
+                    _sendUCTo = 0;
+                break;
+            case CEC_POWER_STATUS:
+                #ifdef DEBUG_CODES
+                    DbgPrint("device at logical %d is ", source);
+                    switch (buffer[1]){
+                        case CEC_POWER_STATUS_ON:
+                            DbgPrint("On");
+                            break;
+                        case CEC_POWER_STATUS_STANDBY:
+                            DbgPrint("on Standby");
+                            break;
+                        case CEC_POWER_STATUS_TRANSITION_STANDBY_TO_ON:
+                            DbgPrint("Turning On");
+                            break;
+                        case CEC_POWER_STATUS_TRANSITION_ON_TO_STANDBY:
+                            DbgPrint("Turning Off");
+                            break;
+                        default:
+                            DbgPrint("UNKNOWN STATUS (%d)", buffer[1]);
+                            break;
+                    }
+                    DbgPrint("\r\n");
+                #endif
+            case CEC_INFO_PHYS_ADDR:
+                break;
+            case CEC_OSD_SET_OSD:
+                {
+                    short osdLen = count -1;
+                    if (osdLen){
+                        char* osdName = new char[osdLen];
+                        memcpy(osdName, buffer+1, osdLen);
+                        osdName[osdLen] = 0;
+                        DbgPrint("Device at logical %d is known as \"%s\"\r\n", source, osdName);
+                        delete osdName;
+                    }
+                    break;
+                }
             default:
                 if (dest == _logicalAddress)//dont wanna do for bcast
-                    TransmitMsg(source, CEC_FEATURE_ABORT, CEC_ABORT_UNRECOGNIZED);
+                    DbgPrint("ABORT!\r\n");
+                    //TransmitMsg(source, CEC_FEATURE_ABORT, CEC_ABORT_UNRECOGNIZED);
                 break;
         }
     }
+}
+
+void CEC_TV::powerOn(){
+    _powerStatus = CEC_POWER_STATUS_TRANSITION_STANDBY_TO_ON;
 }
 
 #endif // CEC_TV_H__
