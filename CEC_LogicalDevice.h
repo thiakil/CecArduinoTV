@@ -3,6 +3,8 @@
 
 #include "CECWire.h"
 
+#define SEND_QUEUE_SIZE 5
+
 class CEC_LogicalDevice : public CEC_Electrical
 {
 public:
@@ -27,9 +29,17 @@ public:
 	virtual bool TransmitMsg(int targetAddress, unsigned char message, unsigned char param1, unsigned char param2);
 	virtual bool TransmitMsg(int targetAddress, unsigned char message, unsigned char param1, unsigned char param2, unsigned char param3);
 	virtual bool TransmitMsg(int targetAddress, unsigned char message, unsigned char param1, unsigned char param2, unsigned char param3, unsigned char param4);
+
+	virtual bool TransmitMsgQ(int targetAddress, unsigned char message);
+	virtual bool TransmitMsgQ(int targetAddress, unsigned char message, unsigned char param1);
+	virtual bool TransmitMsgQ(int targetAddress, unsigned char message, unsigned char param1, unsigned char param2);
+	virtual bool TransmitMsgQ(int targetAddress, unsigned char message, unsigned char param1, unsigned char param2, unsigned char param3);
+	virtual bool TransmitMsgQ(int targetAddress, unsigned char message, unsigned char param1, unsigned char param2, unsigned char param3, unsigned char param4);
+	void SendQueued();
+
     virtual unsigned char getLogical();
     virtual int getPhysical();
-    
+
 protected:
 	virtual bool IsISRTriggered() = 0;
 
@@ -40,6 +50,15 @@ protected:
 
 	virtual void OnReady() {;}
 	virtual void OnReceive(int sourceAddress, int targetAddress, unsigned char* buffer, int count) = 0;
+
+    int _logicalAddress;
+	int _physicalAddress;
+	CEC_DEVICE_TYPE _deviceType;
+
+	short _queuedToSend;
+	unsigned char* _sendQueue[SEND_QUEUE_SIZE];
+	char _sendQueueCount[SEND_QUEUE_SIZE];
+    char _sendQueueDest[SEND_QUEUE_SIZE];
 
 private:
 	typedef enum {
@@ -77,12 +96,9 @@ private:
 
 private:
 	static int _validLogicalAddresses[6][5];
-	int _logicalAddress;
-	int _physicalAddress;
 	unsigned long _waitTime;
 	bool _done;
 
-	CEC_DEVICE_TYPE _deviceType;
 	CEC_PRIMARY_STATE _primaryState;
 	CEC_SECONDARY_STATE _secondaryState;
 	int _tertiaryState;

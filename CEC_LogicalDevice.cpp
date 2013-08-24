@@ -1,3 +1,4 @@
+#include <Arduino.h>
 #include "CEC_LogicalDevice.h"
 
 int CEC_LogicalDevice::_validLogicalAddresses[6][5] =
@@ -20,6 +21,7 @@ CEC_LogicalDevice::CEC_LogicalDevice(int physicalAddress)
 , _waitTime(0)
 , _primaryState(CEC_ALLOCATE_LOGICAL_ADDRESS)
 , _deviceType(CDT_OTHER)
+,_queuedToSend(0)
 ,_waitingTransmit(0)
 {
 	_secondaryState = CEC_XMIT_POLLING_MESSAGE;
@@ -178,6 +180,77 @@ bool CEC_LogicalDevice::TransmitMsg(int targetAddress, unsigned char message, un
 	return TransmitWait(targetAddress, buffer, 5);
 }
 
+bool CEC_LogicalDevice::TransmitMsgQ(int targetAddress, unsigned char message)
+{
+	if (_queuedToSend == SEND_QUEUE_SIZE)
+        return false;
+	_sendQueueDest[_queuedToSend] = targetAddress;
+	_sendQueue[_queuedToSend] = new unsigned char[1];
+    _sendQueue[_queuedToSend][0] = message;
+    _sendQueueCount[_queuedToSend] = 1;
+    _queuedToSend++;
+	return true;
+}
+
+bool CEC_LogicalDevice::TransmitMsgQ(int targetAddress, unsigned char message, unsigned char param1)
+{
+	if (_queuedToSend == SEND_QUEUE_SIZE)
+        return false;
+	_sendQueueDest[_queuedToSend] = targetAddress;
+	_sendQueue[_queuedToSend] = new unsigned char[1];
+    _sendQueue[_queuedToSend][0] = message;
+    _sendQueue[_queuedToSend][1] = param1;
+    _sendQueueCount[_queuedToSend] = 2;
+    _queuedToSend++;
+	return true;
+}
+
+bool CEC_LogicalDevice::TransmitMsgQ(int targetAddress, unsigned char message, unsigned char param1, unsigned char param2)
+{
+	if (_queuedToSend == SEND_QUEUE_SIZE)
+        return false;
+	_sendQueueDest[_queuedToSend] = targetAddress;
+	_sendQueue[_queuedToSend] = new unsigned char[2];
+    _sendQueue[_queuedToSend][0] = message;
+    _sendQueue[_queuedToSend][1] = param1;
+    _sendQueue[_queuedToSend][2] = param2;
+    _sendQueueCount[_queuedToSend] = 3;
+    _queuedToSend++;
+	return true;
+}
+
+bool CEC_LogicalDevice::TransmitMsgQ(int targetAddress, unsigned char message, unsigned char param1, unsigned char param2, unsigned char param3)
+{
+	if (_queuedToSend == SEND_QUEUE_SIZE)
+        return false;
+	_sendQueueDest[_queuedToSend] = targetAddress;
+	_sendQueue[_queuedToSend] = new unsigned char[3];
+    _sendQueue[_queuedToSend][0] = message;
+    _sendQueue[_queuedToSend][1] = param1;
+    _sendQueue[_queuedToSend][2] = param2;
+    _sendQueue[_queuedToSend][3] = param3;
+    _sendQueueCount[_queuedToSend] = 4;
+    _queuedToSend++;
+	return true;
+}
+
+bool CEC_LogicalDevice::TransmitMsgQ(int targetAddress, unsigned char message, unsigned char param1, unsigned char param2, unsigned char param3, unsigned char param4)
+{
+	if (_queuedToSend == SEND_QUEUE_SIZE)
+        return false;
+	_sendQueueDest[_queuedToSend] = targetAddress;
+	_sendQueue[_queuedToSend] = new unsigned char[4];
+    _sendQueue[_queuedToSend][0] = message;
+    _sendQueue[_queuedToSend][1] = param1;
+    _sendQueue[_queuedToSend][2] = param2;
+    _sendQueue[_queuedToSend][3] = param3;
+    _sendQueue[_queuedToSend][4] = param4;
+    _sendQueueCount[_queuedToSend] = 5;
+    _queuedToSend++;
+	return true;
+}
+
+
 void CEC_LogicalDevice::OnTransmitComplete(bool success)
 {
 	if (_primaryState == CEC_ALLOCATE_LOGICAL_ADDRESS &&
@@ -188,10 +261,25 @@ void CEC_LogicalDevice::OnTransmitComplete(bool success)
 			;
 	}
         else {
-          DbgPrint("Transmit: %d\r\n", success);
+          //DbgPrint("Transmit: %d\r\n", success);
           _waitingTransmit = false;
 		  _transmitResult = success;
         }
+}
+
+void CEC_LogicalDevice::SendQueued()
+{
+    if (_queuedToSend){
+        //DbgPrint("sending queued (%d)\r\n", _queuedToSend);
+        for (int i = 0; i < _queuedToSend; i++){
+            //DbgPrint("sending queued msg (%d)\r\n", _sendQueue[i][0]);
+            TransmitWait(_sendQueueDest[i], _sendQueue[i], _sendQueueCount[i]);
+            _sendQueueDest[i] = 0;
+            delete _sendQueue[i]; _sendQueue[i] = 0;
+            _sendQueueCount[i] = 0;
+        }
+        _queuedToSend = 0;
+	}
 }
 
 void CEC_LogicalDevice::Run()
@@ -206,6 +294,7 @@ void CEC_LogicalDevice::Run()
         unsigned long wait = Process();
         if (wait != (unsigned long)-2)
 	        _waitTime = wait;
+
 	return;
 }
 
