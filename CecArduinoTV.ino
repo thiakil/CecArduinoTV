@@ -179,10 +179,14 @@ void loop()
       case 'n':
         device.TransmitMsg(4, CEC_OSD_REQ_OSD);
         break;
+      case 'o':
+        device.powerOff();
+        break;
     }
   }
   //detachInterrupt(0);
   device.Run();
   device.SendQueued();
+  device.checkStartupTimeout();
   //attachInterrupt(0, inputinterrupt,CHANGE);
 }

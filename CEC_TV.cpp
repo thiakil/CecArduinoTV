@@ -4,6 +4,7 @@
 #define DEBUG_CODES
 
 #include "CEC_TV.h"
+#include <IRremote.h>
 
 void debugReceivedMsg(int source, int dest, unsigned char* buffer, int count){
     DbgPrint("%d -> %d (%d): ", source, dest, count);
@@ -85,6 +86,8 @@ void debugReceivedMsg(int source, int dest, unsigned char* buffer, int count){
     }
 }
 
+IRsend irsend;
+
 void CEC_TV::OnReceive(int source, int dest, unsigned char* buffer, int count){
     #ifdef DEBUG_CODES
         debugReceivedMsg(source, dest, buffer, count);
@@ -117,6 +120,7 @@ void CEC_TV::OnReceive(int source, int dest, unsigned char* buffer, int count){
                 break;
             case CEC_ROUTING_INACTIVE:
                 TransmitMsgQ(CEC_BROADCAST, CEC_ROUTING_REQ_ACTIVE);
+                powerOff();
                 break;
             case CEC_MENU_STATUS:
                 if (buffer[1] == CEC_MENU_STATUS_ACTIVATED)
@@ -169,8 +173,41 @@ void CEC_TV::OnReceive(int source, int dest, unsigned char* buffer, int count){
     }
 }
 
+unsigned int koganTvPower[] = {0xBB6, 0xBDA, 0x1C6, 0x60A, 0x1BE, 0x60A, 0x1BE, 0x60A, 0x1BE, 0x622, 0x1AE, 0x61A,
+                               0x1AE, 0x61A, 0x1B6, 0x9FA, 0x1BE, 0x60A, 0x1BE, 0x612, 0x1BE, 0x612, 0x1B6, 0x612,
+                               0x1CE, 0x602, 0x1CE, 0x9EA, 0x1BE, 0x612, 0x1BE, 0x9F2, 0x1BE, 0x9FA, 0x1BE, 0xFD2, 0x1BE,};
+
 void CEC_TV::powerOn(){
-    _powerStatus = CEC_POWER_STATUS_TRANSITION_STANDBY_TO_ON;
+    if (_powerStatus != CEC_POWER_STATUS_ON && _powerStatus != CEC_POWER_STATUS_TRANSITION_STANDBY_TO_ON) {
+        _powerStatus = CEC_POWER_STATUS_TRANSITION_STANDBY_TO_ON;
+        irsend.sendRaw(koganTvPower, 37, 38);
+        _turnedOnAt = millis();
+    }
+}
+
+void CEC_TV::checkStartupTimeout()
+{
+    if (_turnedOnAt){
+        if (millis() - _turnedOnAt >= 13000)//takes about 13s to start up
+        {
+            _turnedOnAt = 0;
+            _powerStatus = CEC_POWER_STATUS_ON;
+            DbgPrint("TODO: proper power on check\r\n");
+        }
+    }
+}
+
+void CEC_TV::powerOff()
+{
+    if(_powerStatus == CEC_POWER_STATUS_ON)
+    {
+        irsend.sendRaw(koganTvPower, 37, 38);
+        irsend.sendRaw(koganTvPower, 37, 38);
+        _powerStatus = CEC_POWER_STATUS_STANDBY;
+        DbgPrint("TODO: proper power off check\r\n");
+    }
+    if (_powerStatus == CEC_POWER_STATUS_TRANSITION_STANDBY_TO_ON)
+        DbgPrint("still transitioning!\r\n");
 }
 
 #endif // CEC_TV_H__

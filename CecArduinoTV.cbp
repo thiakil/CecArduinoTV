@@ -650,6 +650,7 @@
 		</Build>
 		<Compiler>
 			<Add directory="." />
+			<Add directory="../../../Downloads/CodeBlocks/arduino/libraries/IRremote" />
 		</Compiler>
 		<Unit filename="CECWire.cpp" />
 		<Unit filename="CECWire.h" />
@@ -680,7 +681,9 @@
 		<Unit filename="status.cpp" />
 		<Unit filename="status.h" />
 		<Extensions>
-			<code_completion />
+			<code_completion>
+				<search_path add="..\..\..\Downloads\CodeBlocks\arduino\libraries\IRremote" />
+			</code_completion>
 			<debugger />
 		</Extensions>
 	</Project>
