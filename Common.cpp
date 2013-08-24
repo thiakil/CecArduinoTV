@@ -3,7 +3,7 @@
 
 #ifdef WIN32
 
-static char FormatBuffer[4096]; 
+static char FormatBuffer[4096];
 static CRITICAL_SECTION CriticalSection;
 static bool CriticalSectionInitialized = false;
 
@@ -35,19 +35,20 @@ void DbgPrint(const char* fmt, ...)
 #include <util/delay.h>
 #include <Arduino.h>
 
-void* operator new(size_t size) { return malloc(size); }
+/*void* operator new(size_t size) { return malloc(size); }
 void operator delete(void* ptr) { free(ptr); }
 
-
-extern "C" 
+#ifndef __cxa_pure_virtual
+extern "C"
 void __cxa_pure_virtual(void)
 {
   while(1);
 }
+#endif*/
 
 void DbgPrint(const char* fmt, ...)
 {
-        char FormatBuffer[128]; 
+        char FormatBuffer[128];
     va_list args;
     va_start(args, fmt);
         vsprintf(FormatBuffer, fmt, args);

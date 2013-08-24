@@ -13,7 +13,10 @@ void DbgPrint(const char* fmt, ...);
 
 #define ASSERT(x) ((void)0)
 void DbgPrint(const char* fmt, ...);
+
+#ifndef NULL
 #define NULL 0
+#endif
 
 #endif
 
