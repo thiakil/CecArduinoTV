@@ -69,6 +69,7 @@ void XX_SetLineState(CEC_Device* device, bool state)
 void setup()
 {
   Wire.begin();
+  Serial.begin(115200);
   pinMode(OUT_LINE, OUTPUT);
   pinMode(IN_LINE, INPUT);
 
@@ -88,7 +89,7 @@ void setup()
 
   digitalWrite(OUT_LINE, LOW);
   delay(1000);
-  Serial.begin(115200);
+
 
   //device.MonitorMode = true;
   //int id = readEDID();
@@ -96,7 +97,7 @@ void setup()
   device = CEC_TV();
 
   //device.Promiscuous = true; //Relay all line traffic
-  //device.Initialize(CEC_LogicalDevice::CDT_TV);
+  device.Initialize(CEC_LogicalDevice::CDT_TV);
   //send_addr(device.getPhysical(), device.getLogical());
   //send_mem_status();
   digitalWrite(LED1, HIGH);
@@ -113,7 +114,7 @@ void setup()
     Serial.println("transmitted");*/
 
 
-  attachInterrupt(0, inputinterrupt,CHANGE);
+  //attachInterrupt(0, inputinterrupt,CHANGE);
 
 }
 
@@ -124,7 +125,7 @@ void loop()
 
     unsigned char c = Serial.read();
 
-    detachInterrupt(0);
+    //detachInterrupt(0);
 
     switch (c)
     {
