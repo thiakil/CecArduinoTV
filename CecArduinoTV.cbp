@@ -658,6 +658,8 @@
 		<Unit filename="CEC_Device.h" />
 		<Unit filename="CEC_LogicalDevice.cpp" />
 		<Unit filename="CEC_LogicalDevice.h" />
+		<Unit filename="CEC_TV.cpp" />
+		<Unit filename="CEC_TV.h" />
 		<Unit filename="CecArduinoTV.ino">
 			<Option compile="1" />
 			<Option link="1" />
@@ -675,8 +677,6 @@
 		<Unit filename="cmdhandler.h" />
 		<Unit filename="edid.cpp" />
 		<Unit filename="edid.h" />
-		<Unit filename="packetserial.cpp" />
-		<Unit filename="packetserial.h" />
 		<Unit filename="status.cpp" />
 		<Unit filename="status.h" />
 		<Extensions>
