@@ -160,8 +160,8 @@ void loop()
         break;
     }
   }
-  detachInterrupt(0);
+  //detachInterrupt(0);
   device.Run();
   device.SendQueued();
-  attachInterrupt(0, inputinterrupt,CHANGE);
+  //attachInterrupt(0, inputinterrupt,CHANGE);
 }
