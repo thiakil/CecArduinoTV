@@ -192,6 +192,7 @@ void CEC_TV::checkStartupTimeout()
         {
             _turnedOnAt = 0;
             _powerStatus = CEC_POWER_STATUS_ON;
+            TransmitMsg(0xf, CEC_ROUTING_REQ_ACTIVE);
             DbgPrint("TODO: proper power on check\r\n");
         }
     }
