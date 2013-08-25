@@ -308,7 +308,7 @@ void CEC_TV::checkStartupTimeout()
             broadcastForActiveSource();
         }
     }
-    if (_activeSrcBroadcast && millis() - _activeSrcBroadcast >= 5000)//5 sec timeout
+    if (_activeSrcBroadcast && millis() - _activeSrcBroadcast >= 10000)//10 sec timeout
     {
         DbgPrint("activesrc triggered (%d): %s\r\n", _activeSrcBroadcast, _activeSrcBroadcastForStandby ? "true" : "false");
         if (_activeSrcBroadcastForStandby)
