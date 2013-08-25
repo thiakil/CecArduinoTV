@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
 	<ActiveTarget name="Arduino Mega 1280" />
-	<File name="CEC_TV.cpp" open="1" top="1" tabpos="11" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="edid.cpp" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="188" topLine="90" />
+			<Cursor1 position="2640" topLine="44" />
+		</Cursor>
+	</File>
+	<File name="edid.h" open="0" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="98" topLine="0" />
 		</Cursor>
 	</File>
 	<File name="CEC_Device.cpp" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="1849" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="CEC_TV.h" open="1" top="0" tabpos="12" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="509" topLine="0" />
 		</Cursor>
 	</File>
 	<File name="CEC_Device.h" open="1" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -23,17 +23,30 @@
 	</File>
 	<File name="CEC_LogicalDevice.cpp" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="9255" topLine="265" />
+			<Cursor1 position="956" topLine="0" />
 		</Cursor>
 	</File>
 	<File name="CEC_LogicalDevice.h" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="308" topLine="73" />
+			<Cursor1 position="1729" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="CEC_TV.cpp" open="1" top="1" tabpos="11" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="16524" topLine="331" />
+		</Cursor>
+		<Folding>
+			<Collapse line="356" />
+		</Folding>
+	</File>
+	<File name="CEC_TV.h" open="1" top="0" tabpos="12" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="725" topLine="18" />
 		</Cursor>
 	</File>
 	<File name="CecArduinoTV.ino" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="2146" topLine="99" />
+			<Cursor1 position="3170" topLine="105" />
 		</Cursor>
 	</File>
 	<File name="Common.cpp" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -46,39 +59,29 @@
 			<Cursor1 position="298" topLine="0" />
 		</Cursor>
 	</File>
+	<File name="CECWire.cpp" open="1" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="15913" topLine="531" />
+		</Cursor>
+	</File>
+	<File name="CECWire.h" open="1" top="0" tabpos="10" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="0" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="CEC_Codes.h" open="1" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="5862" topLine="140" />
+		</Cursor>
+	</File>
 	<File name="Serial.cpp" open="1" top="0" tabpos="13" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="1629" topLine="60" />
 		</Cursor>
 	</File>
-	<File name="CECWire.cpp" open="1" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="15925" topLine="639" />
-		</Cursor>
-	</File>
-	<File name="CECWire.h" open="1" top="0" tabpos="10" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1518" topLine="83" />
-		</Cursor>
-	</File>
-	<File name="CEC_Codes.h" open="1" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="972" topLine="11" />
-		</Cursor>
-	</File>
 	<File name="Serial.h" open="1" top="0" tabpos="14" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="584" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="edid.cpp" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="2640" topLine="44" />
-		</Cursor>
-	</File>
-	<File name="edid.h" open="0" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="98" topLine="0" />
+			<Cursor1 position="584" topLine="4" />
 		</Cursor>
 	</File>
 </CodeBlocks_layout_file>

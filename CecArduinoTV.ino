@@ -3,6 +3,7 @@
 #include "CEC_TV.h"
 //#include "cli.h"
 #include <Wire.h>
+#include <IRremote.h>
 #include "edid.h"
 #include "MemoryFree.h"
 
@@ -117,15 +118,15 @@ void setup()
   //attachInterrupt(0, inputinterrupt,CHANGE);
 
 }
+IRsend irsend;
 
 void loop()
 {
   if (Serial.available())
   {
+      //detachInterrupt(0);
 
     unsigned char c = Serial.read();
-
-    //detachInterrupt(0);
 
     switch (c)
     {
@@ -138,9 +139,9 @@ void loop()
       case '3':
         device.TransmitMsg(4, CEC_POWER_REQ_STATUS);
         break;
-      case 'r':
+      /*case 'r':
         device.TransmitMsg(5, CEC_AUDIO_MODE_REQ, 0x11, 0x00);
-        break;
+        break;*/
       case 'u':
         device.TransmitMsg(5, CEC_MENU_UC_PRESSED, CEC_UC_CODE_VOLUME_UP);
         device.TransmitMsg(5, CEC_MENU_UC_RELEASED);
@@ -157,9 +158,9 @@ void loop()
               DbgPrint("ping: %d", device.TransmitWait(0x4, buffer, 0));
               break;
           }
-      case 'e':
+      /*case 'e':
         DbgPrint("read edid: %d", readEDID());
-        break;
+        break;*/
       case '8':
         device.TransmitMsg(4, CEC_MENU_UC_PRESSED, CEC_UC_CODE_UP);
         device.TransmitMsg(4, CEC_MENU_UC_RELEASED);
@@ -180,13 +181,23 @@ void loop()
         device.TransmitMsg(4, CEC_OSD_REQ_OSD);
         break;
       case 'o':
-        device.powerOff();
+        device.powerToggle();
+        break;
+      case 'q':
+        changeKoganInput(&irsend, 1);
+        break;
+      case 'w':
+        changeKoganInput(&irsend, 2);
+        break;
+      case 'e':
+        changeKoganInput(&irsend, 3);
+        break;
+      case 'r':
+        changeKoganInput(&irsend, 4);
         break;
     }
   }
   //detachInterrupt(0);
-  device.Run();
-  device.SendQueued();
-  device.checkStartupTimeout();
+  device.loop();
   //attachInterrupt(0, inputinterrupt,CHANGE);
 }
