@@ -120,7 +120,8 @@ void CEC_TV::OnReceive(int source, int dest, unsigned char* buffer, int count){
                 break;
             case CEC_ROUTING_INACTIVE:
                 if (_powerStatus == CEC_POWER_STATUS_ON)
-                    broadcastForActiveSource();//this probably shows up with nothing as other sources assume they're not active, but we check to be sure.
+                    broadcastForActiveSource(true);//this probably shows up with nothing as other sources assume they're not active, but we check to be sure.
+                    DbgPrint("should probably do proper check of device standby status, and switch to one if its active\r\n");
                 break;
             case CEC_MENU_STATUS:
                 if (buffer[1] == CEC_MENU_STATUS_ACTIVATED)
