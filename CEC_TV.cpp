@@ -175,9 +175,14 @@ void CEC_TV::OnReceive(int source, int dest, unsigned char* buffer, int count){
 }
 
 //power - 37
-unsigned int koganTvPower[] = {0xBB6, 0xBDA, 0x1C6, 0x60A, 0x1BE, 0x60A, 0x1BE, 0x60A, 0x1BE, 0x622, 0x1AE, 0x61A,
+unsigned int koganTvPower[] = /*{0xBB6, 0xBDA, 0x1C6, 0x60A, 0x1BE, 0x60A, 0x1BE, 0x60A, 0x1BE, 0x622, 0x1AE, 0x61A,
                                0x1AE, 0x61A, 0x1B6, 0x9FA, 0x1BE, 0x60A, 0x1BE, 0x612, 0x1BE, 0x612, 0x1B6, 0x612,
-                               0x1CE, 0x602, 0x1CE, 0x9EA, 0x1BE, 0x612, 0x1BE, 0x9F2, 0x1BE, 0x9FA, 0x1BE, 0xFD2, 0x1BE,};
+                               0x1CE, 0x602, 0x1CE, 0x9EA, 0x1BE, 0x612, 0x1BE, 0x9F2, 0x1BE, 0x9FA, 0x1BE, 0xFD2, 0x1BE,};*/
+                               {-1000,3080,-2968,560,-1456,560,-1456,560,-1512,504,-1512,504,-1512,504,-1512,504,-2520,504,
+                                -1512,504,-1512,504,-1512,560,-1456,560,-1456,560,-2464,560,-1456,560,-2464,560,-2464,560,
+                                -4032,504,-23212,3080,-2968,560,-1456,504,-1512,560,-1456,560,-1456,560,-1456,560,-1512,
+                                504,-2520,504,-1512,504,-1512,504,-1512,504,-1512,504,-1512,504,-2520,504,-1512,504,-2520,
+                                504,-2520,504,-4032,560,-100912};//format from forum guy
 //UP - 37
 unsigned int koganTvUp[] = {0xBBE, 0xBB2, 0x1BE, 0x62A, 0x1BE, 0x5F2, 0x1BE, 0x62A, 0x1BE, 0x5F2, 0x1BE, 0x62A,
                             0x1BE, 0x62A, 0x186, 0xA22, 0x18E, 0x62A, 0x1C6, 0x62A, 0x18E, 0x62A, 0x1C6, 0x9EA,
@@ -237,11 +242,15 @@ unsigned int koganTvAspect[] = {0xBB6, 0xBEA, 0x1BE, 0x5F2, 0x1BE, 0x62A, 0x1BE,
 #define KOGAN_DELAY 500
 void sendKoganCode(IRsend* irsend, unsigned int* code)
 {
-    irsend->sendRaw(code, 37, 38);
-    //irsend->sendRaw(code, 37, 38);
-    //delay(100);
-    delayMicroseconds(10);
-    irsend->sendRaw(code, 37, 38);
+    if (code == koganTvPower){
+        irsend->sendRaw(code, 72, 38);
+    } else {
+        irsend->sendRaw(code, 37, 38);
+        //irsend->sendRaw(code, 37, 38);
+        //delay(100);
+        delayMicroseconds(10);
+        irsend->sendRaw(code, 37, 38);
+    }
 }
 
 short currentInput = -1;
@@ -317,7 +326,8 @@ void CEC_TV::checkStartupTimeout()
             _activeSrcBroadcast = 0;
             powerOff();
         } else {
-            TransmitMsg(0xf, CEC_ROUTING_REQ_PATH, DEFAULT_INPUT_ADDR >> 8, DEFAULT_INPUT_ADDR & 0xFF);
+            int switchAddr = (currentInput != -1) ? currentInput << 12 : DEFAULT_INPUT_ADDR;
+            TransmitMsg(0xf, CEC_ROUTING_REQ_PATH, switchAddr >> 8, switchAddr & 0xFF);
             broadcastForActiveSource(true);
         }
     }
