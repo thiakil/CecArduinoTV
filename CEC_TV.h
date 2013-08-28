@@ -65,6 +65,6 @@ public:
 };
 
 void changeKoganInput(IRsend* irsend, short hdmiInput);
-void sendKoganCode(IRsend* irsend, unsigned int* code, unsigned int* code2);
+void sendKoganCode(IRsend* irsend, int code);
 
 #endif // CEC_TV_H_INCLUDED

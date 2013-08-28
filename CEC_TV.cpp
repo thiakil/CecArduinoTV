@@ -115,6 +115,7 @@ void CEC_TV::OnReceive(int source, int dest, unsigned char* buffer, int count){
                     _activeSrcBroadcast = 0;
                     DbgPrint("changing to input %d\r\n", buffer[1]>>4 & 0xf);
                     changeKoganInput(&irsend, buffer[1]>>4 & 0xf);
+                    irrecv.enableIRIn(); // Re-enable receiver
                     TransmitMsgQ(source, CEC_OSD_REQ_OSD);
                 }
                 break;
@@ -174,83 +175,62 @@ void CEC_TV::OnReceive(int source, int dest, unsigned char* buffer, int count){
     }
 }
 
-//power - 37
-unsigned int koganTvPower[] = /*{0xBB6, 0xBDA, 0x1C6, 0x60A, 0x1BE, 0x60A, 0x1BE, 0x60A, 0x1BE, 0x622, 0x1AE, 0x61A,
-                               0x1AE, 0x61A, 0x1B6, 0x9FA, 0x1BE, 0x60A, 0x1BE, 0x612, 0x1BE, 0x612, 0x1B6, 0x612,
-                               0x1CE, 0x602, 0x1CE, 0x9EA, 0x1BE, 0x612, 0x1BE, 0x9F2, 0x1BE, 0x9FA, 0x1BE, 0xFD2, 0x1BE,};*/
-                               {1000,3080,2968,560,1456,560,1456,560,1512,504,1512,504,1512,504,1512,504,2520,504,
-                                1512,504,1512,504,1512,560,1456,560,1456,560,2464,560,1456,560,2464,560,2464,560,
-                                4032,504,23212,3080,2968,560,1456,504,1512,560,1456,560,1456,560,1456,560,1512,
-                                504,2520,504,1512,504,1512,504,1512,504,1512,504,1512,504,2520,504,1512,504,2520,
-                                504,2520,504,4032,560,100912};//format from forum guy
-//UP - 37
-unsigned int koganTvUp[] = {0xBBE, 0xBB2, 0x1BE, 0x62A, 0x1BE, 0x5F2, 0x1BE, 0x62A, 0x1BE, 0x5F2, 0x1BE, 0x62A,
-                            0x1BE, 0x62A, 0x186, 0xA22, 0x18E, 0x62A, 0x1C6, 0x62A, 0x18E, 0x62A, 0x1C6, 0x9EA,
-                            0x1C6, 0x62A, 0x18E, 0xA22, 0x1C6, 0x5EA, 0x1C6, 0x9EA, 0x1BE, 0x9F2, 0x1BE, 0xFE2, 0x1C6,};
-//DOWN - 37
-unsigned int koganTvDown[] = {0xBBE, 0xBB2, 0x1C6, 0x62A, 0x1C6, 0x5F2, 0x1BE, 0x62A, 0x1BE, 0x5F2, 0x1BE, 0x62A, 0x1BE,
-                              0x5F2, 0x1BE, 0xA2A, 0x186, 0x62A, 0x1BE, 0x62A, 0x186, 0x62A, 0x1BE, 0x9EA, 0x1BE, 0x62A,
-                              0x1BE, 0x9EA, 0x1C6, 0x9EA, 0x1C6, 0x5EA, 0x1C6, 0x62A, 0x1C6, 0xFE2, 0x186,};
-//ENTER - 37
-unsigned int koganTvEnter[] = {0xBB6, 0xBEA, 0x1BE, 0x62A, 0x1C6, 0x5EA, 0x1C6, 0x622, 0x18E, 0x622, 0x1C6, 0x62A, 0x18E, 0x62A,
-                               0x1C6, 0x9EA, 0x1C6, 0x622, 0x1C6, 0x5F2, 0x1C6, 0x62A, 0x1C6, 0x9EA, 0x1BE, 0x62A, 0x186, 0xA2A,
-                               0x186, 0xA22, 0x1BE, 0x9F2, 0x1BE, 0x9F2, 0x1BE, 0xFE2, 0x18E,};
-//INPUT - 37
-unsigned int koganTvInput[] = {0xBBE, 0xBEA, 0x1BE, 0x62A, 0x1BE, 0x5F2, 0x1BE, 0x62A, 0x1BE, 0x5F2, 0x1BE, 0x62A, 0x1BE, 0x5F2,
-                               0x1BE, 0x9F2, 0x1BE, 0x62A, 0x1BE, 0x5F2, 0x1BE, 0x62A, 0x1BE, 0x5EA, 0x1C6, 0x9EA, 0x1C6, 0xA22,
-                               0x18E, 0xA22, 0x18E, 0x622, 0x1C6, 0x62A, 0x18E, 0xFE2, 0x1BE,};
-
-//DTV - 37
-unsigned int koganTvDtv[] = {0xBB6, 0xBB2, 0x1BE, 0x62A, 0x1BE, 0x5F2, 0x1BE, 0x62A, 0x1BE, 0x5F2, 0x1BE, 0x62A, 0x1BE,
-                             0x5F2, 0x1BE, 0x9EA, 0x1BE, 0x62A, 0x1C6, 0x622, 0x18E, 0x622, 0x1C6, 0x9EA, 0x1C6, 0x9EA,
-                             0x1C6, 0x62A, 0x1C6, 0x5F2, 0x1C6, 0x9EA, 0x1C6, 0x62A, 0x1C6, 0xFAA, 0x1C6,};
-
-//ASPECT 37
-unsigned int koganTvAspect[] = {0xBB6, 0xBEA, 0x1BE, 0x5F2, 0x1BE, 0x62A, 0x1BE, 0x5F2, 0x1BE, 0x632, 0x1BE, 0x62A,
-                                0x18E, 0x62A, 0x1C6, 0x9EA, 0x1C6, 0x62A, 0x1C6, 0x5F2, 0x1C6, 0x622, 0x18E, 0xA22,
-                                0x1C6, 0x9EA, 0x1C6, 0x5EA, 0x1BE, 0x62A, 0x1BE, 0x5F2, 0x1BE, 0x9EA, 0x1BE, 0xFE2, 0x1C6,};
+#define KOGAN_POWER 0x20B
+#define KOGAN_INPUT 0x21C
+#define KOGAN_UP 0x22B
+#define KOGAN_DOWN 0x22C
+#define KOGAN_LEFT 0x22D
+#define KOGAN_RIGHT 0x22E
+#define KOGAN_DTV 0x232
+#define KOGAN_MENU 0x215
+#define KOGAN_ENTER 0x22F
+#define KOGAN_ASPECT 0x231
+#define KOGAN_EXIT 0x230
+#define KOGAN_3D 0x233
+//#define KOGAN_ 0x
 
 
-#define REMOTE_PROTOCOL SANYO
+#define REMOTE_PROTOCOL RC6
 #define check_remote_protocol if (results.decode_type != REMOTE_PROTOCOL) break;
 
-#define REMOTE_UP 0x559AA6
-#define REMOTE_DOWN 0x558AA7
-#define REMOTE_LEFT 0x556AA9
-#define REMOTE_RIGHT 0x557AA8
-#define REMOTE_ENTER 0x5F4A0B
-#define REMOTE_POWER 0x52AAD5
-#define REMOTE_BACK 0x527AD8
-#define REMOTE_MENU 0x508AF7
-#define REMOTE_SKIP_BACK 0x51DAE2
-#define REMOTE_SKIP_FORWARD 0x51CAE3
-#define REMOTE_PAUSE 0x519AE6
-#define REMOTE_PLAY 0x515AEA
-#define REMOTE_RED 0x53CAC3
-#define REMOTE_AV 0x547AB8
-#define REMOTE_1 0x531ACE
-#define REMOTE_2 0x532ACD
-#define REMOTE_3 0x533ACC
-#define REMOTE_4 0x534ACB
-#define REMOTE_0 0x530ACF
-#define REMOTE_RECORD 0x517AE8
-#define REMOTE_STOP 0x51FAE0
-#define REMOTE_GUIDE 0x577A88
+#define REMOTE_UP 0x2858
+#define REMOTE_DOWN 0x2859
+#define REMOTE_LEFT 0x285A
+#define REMOTE_RIGHT 0x285B
+#define REMOTE_ENTER 0x285C
+#define REMOTE_POWER 0x280C
+#define REMOTE_BACK 0x2883
+#define REMOTE_MENU 0x2854
+#define REMOTE_SKIP_BACK 0x286D
+#define REMOTE_SKIP_FORWARD 0x2870
+#define REMOTE_PAUSE 0x283C
+#define REMOTE_PLAY 0x286F
+//#define REMOTE_RED 0x286D
+//#define REMOTE_GREEN 0x286E
+//#define REMOTE_YELLOW 0x286F
+//#define REMOTE_BLUE 0x2870
+//#define REMOTE_AV 0x547AB8
+#define REMOTE_1 0x2801
+#define REMOTE_2 0x2802
+#define REMOTE_3 0x2803
+#define REMOTE_4 0x2804
+#define REMOTE_5 0x2805
+#define REMOTE_6 0x2806
+#define REMOTE_7 0x2807
+#define REMOTE_8 0x2808
+#define REMOTE_9 0x2809
+#define REMOTE_0 0x2800
+#define REMOTE_RECORD 0x28FF
+#define REMOTE_STOP 0x286E
+#define REMOTE_GUIDE 0x28CC
 //#define REMOTE_ 0x
 
 
 #define KOGAN_DELAY 500
-void sendKoganCode(IRsend* irsend, unsigned int* code)
+void sendKoganCode(IRsend* irsend, int code)
 {
-    if (code == koganTvPower){
-        irsend->sendRaw(code, 72, 38);
-    } else {
-        irsend->sendRaw(code, 37, 38);
-        //irsend->sendRaw(code, 37, 38);
-        //delay(100);
-        delayMicroseconds(10);
-        irsend->sendRaw(code, 37, 38);
-    }
+    irsend->sendKogan(code, 32);
+    irsend->sendKogan(code, 32);
 }
 
 short currentInput = -1;
@@ -267,7 +247,7 @@ void changeKoganInput(IRsend* irsend, short hdmiInput)
     {
         hdmiInput--;//make it 0 based
         numPresses = 6 + hdmiInput;
-        sendKoganCode(irsend, koganTvDtv);
+        sendKoganCode(irsend, KOGAN_DTV);
         delay(2000);
     } else if (currentInput < hdmiInput) {
         numPresses = hdmiInput - currentInput;
@@ -277,24 +257,23 @@ void changeKoganInput(IRsend* irsend, short hdmiInput)
     }
     DbgPrint("presses: %d\r\n", numPresses);
 
-    sendKoganCode(irsend, koganTvInput);
+    sendKoganCode(irsend, KOGAN_INPUT);
     delay(KOGAN_DELAY*2);
     for (int i=0; i < numPresses; i++){
         if (down)
-            sendKoganCode(irsend, koganTvDown);
+            sendKoganCode(irsend, KOGAN_DOWN);
         else
-            sendKoganCode(irsend, koganTvUp);
-        //sendKoganCode(irsend, koganTvInput);
+            sendKoganCode(irsend, KOGAN_UP);
         delay(KOGAN_DELAY);
     }
-    sendKoganCode(irsend, koganTvEnter);
+    sendKoganCode(irsend, KOGAN_ENTER);
     currentInput = hdmiInput;
 }
 
 void CEC_TV::powerOn(){
     if (_powerStatus != CEC_POWER_STATUS_ON && _powerStatus != CEC_POWER_STATUS_TRANSITION_STANDBY_TO_ON) {
         _powerStatus = CEC_POWER_STATUS_TRANSITION_STANDBY_TO_ON;
-        sendKoganCode(&irsend,koganTvPower);
+        sendKoganCode(&irsend, KOGAN_POWER);
         _turnedOnAt = millis();
         irrecv.enableIRIn(); // Re-enable receiver
     }
@@ -337,7 +316,7 @@ void CEC_TV::powerOff()
 {
     if(_powerStatus == CEC_POWER_STATUS_ON)
     {
-        sendKoganCode(&irsend,koganTvPower);
+        sendKoganCode(&irsend, KOGAN_POWER);
         _powerStatus = CEC_POWER_STATUS_STANDBY;
         TransmitMsg(CEC_BROADCAST, CEC_STANDBY);
         DbgPrint("TODO: proper power off check\r\n");
@@ -405,6 +384,9 @@ void debugIRCode(decode_results *results) {
         return;
       }
     }
+    else if (results->decode_type == KOGAN) {
+     Serial.print("Decoded KOGAN: ");
+    }
     else if (codeType == SONY) {
       Serial.print("Received SONY: ");
     }
@@ -460,15 +442,15 @@ void CEC_TV::loop()
             {
                 results.value = _lastRemoteInputCode;
                 _lastRemoteInputTime = millis();
-                Serial.println("REPEAT");
-                Serial.println(results.value, HEX);
+                //Serial.println("REPEAT");
+                //Serial.println(results.value, HEX);
             }
             //Serial.println(timeNow - _lastRemoteInputTime);
         } else {
             _lastRemoteInputTime = millis();
             _lastRemoteInputCode = results.value;
-            Serial.println(results.value, HEX);
-            Serial.println(_lastRemoteInputCode, HEX);
+            //Serial.println(results.value, HEX);
+            //Serial.println(_lastRemoteInputCode, HEX);
         }
         switch (results.value)
         {
@@ -503,10 +485,10 @@ void CEC_TV::loop()
                 currentInput = -1;//reset it
                 changeKoganInput(&irsend, 1);
                 break;
-            case REMOTE_RED:
+            case REMOTE_GUIDE:
                 check_remote_protocol
                 delay(250);
-                sendKoganCode(&irsend, koganTvAspect);
+                sendKoganCode(&irsend, KOGAN_ASPECT);
                 break;
             case REMOTE_UP:
                 check_remote_protocol
