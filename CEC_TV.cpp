@@ -178,11 +178,11 @@ void CEC_TV::OnReceive(int source, int dest, unsigned char* buffer, int count){
 unsigned int koganTvPower[] = /*{0xBB6, 0xBDA, 0x1C6, 0x60A, 0x1BE, 0x60A, 0x1BE, 0x60A, 0x1BE, 0x622, 0x1AE, 0x61A,
                                0x1AE, 0x61A, 0x1B6, 0x9FA, 0x1BE, 0x60A, 0x1BE, 0x612, 0x1BE, 0x612, 0x1B6, 0x612,
                                0x1CE, 0x602, 0x1CE, 0x9EA, 0x1BE, 0x612, 0x1BE, 0x9F2, 0x1BE, 0x9FA, 0x1BE, 0xFD2, 0x1BE,};*/
-                               {-1000,3080,-2968,560,-1456,560,-1456,560,-1512,504,-1512,504,-1512,504,-1512,504,-2520,504,
-                                -1512,504,-1512,504,-1512,560,-1456,560,-1456,560,-2464,560,-1456,560,-2464,560,-2464,560,
-                                -4032,504,-23212,3080,-2968,560,-1456,504,-1512,560,-1456,560,-1456,560,-1456,560,-1512,
-                                504,-2520,504,-1512,504,-1512,504,-1512,504,-1512,504,-1512,504,-2520,504,-1512,504,-2520,
-                                504,-2520,504,-4032,560,-100912};//format from forum guy
+                               {1000,3080,2968,560,1456,560,1456,560,1512,504,1512,504,1512,504,1512,504,2520,504,
+                                1512,504,1512,504,1512,560,1456,560,1456,560,2464,560,1456,560,2464,560,2464,560,
+                                4032,504,23212,3080,2968,560,1456,504,1512,560,1456,560,1456,560,1456,560,1512,
+                                504,2520,504,1512,504,1512,504,1512,504,1512,504,1512,504,2520,504,1512,504,2520,
+                                504,2520,504,4032,560,100912};//format from forum guy
 //UP - 37
 unsigned int koganTvUp[] = {0xBBE, 0xBB2, 0x1BE, 0x62A, 0x1BE, 0x5F2, 0x1BE, 0x62A, 0x1BE, 0x5F2, 0x1BE, 0x62A,
                             0x1BE, 0x62A, 0x186, 0xA22, 0x18E, 0x62A, 0x1C6, 0x62A, 0x18E, 0x62A, 0x1C6, 0x9EA,
@@ -378,6 +378,7 @@ void debugIRCode(decode_results *results) {
     // Drop first value (gap)
     // Convert from ticks to microseconds
     // Tweak marks shorter, and spaces longer to cancel out IR receiver distortion
+    Serial.print("unsigned int unknownCode[] = {");
     for (int i = 1; i <= codeLen; i++) {
       if (i % 2) {
         // Mark
@@ -389,11 +390,11 @@ void debugIRCode(decode_results *results) {
         rawCodes[i - 1] = results->rawbuf[i]*USECPERTICK + MARK_EXCESS;
         //Serial.print(" s");
       }
-      Serial.print("0x");
-      Serial.print(rawCodes[i - 1], HEX);
+      //Serial.print("0x");
+      Serial.print(rawCodes[i - 1]);
       Serial.print(", ");
     }
-    Serial.println("");
+    Serial.println("};");
   }
   else {
     if (codeType == NEC) {
