@@ -4,17 +4,17 @@ public:
   TV_Control(){}
   virtual ~TV_Control(){};
   
-  virtual void powerOff();
-  virtual void powerToggle();
+  virtual void powerOff(){};
+  virtual void powerToggle(){};
   
-  virtual void loop();
+  virtual void loop(){};
 
-  virtual void powerOn();
+  virtual void powerOn(){};
 
   virtual byte getTvPowerStatus(){return CEC_POWER_STATUS_STANDBY;};
-  virtual bool isTransitionedToOn();
+  virtual bool isTransitionedToOn() {return false; };
 
-  virtual void changeHdmiInput(int input);
+  virtual void changeHdmiInput(int input){};
 
 protected:
 
@@ -30,5 +30,6 @@ public:
 
 protected:
   bool hotplugVoltagePresent();
+  void sendKoganCode(unsigned int* code)
 
 };
