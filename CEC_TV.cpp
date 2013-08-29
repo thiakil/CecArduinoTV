@@ -550,10 +550,10 @@ void CEC_TV::loop()
                 //delay(100);
                 sendUC(CEC_UC_CODE_RECORD);
                 break;
+            #ifdef DEBUG_CODES
             default:
-                #ifdef DEBUG_CODES
                 debugIRCode(&results);
-                #endif
+            #endif
         }
         irrecv.resume(); // resume receiver
     }
