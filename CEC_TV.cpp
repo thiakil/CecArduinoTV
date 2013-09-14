@@ -247,9 +247,12 @@ void changeKoganInput(IRsend* irsend, short hdmiInput)
     if (currentInput == -1)//its unknown
     {
         hdmiInput--;//make it 0 based
-        numPresses = 6 + hdmiInput;
-        sendKoganCode(irsend, KOGAN_DTV);
-        delay(2000);
+        numPresses = 2 + hdmiInput;//2 is from componenet
+        //sendKoganCode(irsend, KOGAN_DTV);
+        //delay(2000);
+        sendKoganCode(irsend, 0x0F9);//switch to componenet
+        sendKoganCode(irsend, 0x0F9);//switch to componenet
+        delay(KOGAN_DELAY*2);
     } else if (currentInput < hdmiInput) {
         numPresses = hdmiInput - currentInput;
     } else {
