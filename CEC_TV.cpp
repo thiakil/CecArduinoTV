@@ -5,6 +5,9 @@
 #define DEBUG_IRCODES
 
 #include "CEC_TV.h"
+#include "Wire.h"
+
+short currentInput = -1;
 
 void debugReceivedMsg(int source, int dest, unsigned char* buffer, int count){
     DbgPrint("%d -> %d (%d): ", source, dest, count);
@@ -115,8 +118,14 @@ void CEC_TV::OnReceive(int source, int dest, unsigned char* buffer, int count){
                 {
                     _activeSrcBroadcast = 0;
                     DbgPrint("changing to input %d\r\n", buffer[1]>>4 & 0xf);
-                    changeKoganInput(&irsend, buffer[1]>>4 & 0xf);
-                    irrecv.enableIRIn(); // Re-enable receiver
+                    //changeKoganInput(&irsend, buffer[1]>>4 & 0xf);
+                    //irrecv.enableIRIn(); // Re-enable receiver
+                    Wire.beginTransmission(I2C_SLAVE_ADDRESS);
+                    Wire.write(TVCOMAND_changeinput);
+                    Wire.write(buffer[1]>>4 & 0xf);
+                    Wire.write(currentInput);
+                    Wire.endTransmission();
+                    currentInput = buffer[1]>>4 & 0xf;
                     TransmitMsgQ(source, CEC_OSD_REQ_OSD);
                 }
                 break;
@@ -234,8 +243,6 @@ void sendKoganCode(IRsend* irsend, int code)
     irsend->sendKogan(code, 32);
 }
 
-short currentInput = -1;
-
 //6th item is hdmi 1
 void changeKoganInput(IRsend* irsend, short hdmiInput)
 {
@@ -277,9 +284,12 @@ void changeKoganInput(IRsend* irsend, short hdmiInput)
 void CEC_TV::powerOn(){
     if (_powerStatus != CEC_POWER_STATUS_ON && _powerStatus != CEC_POWER_STATUS_TRANSITION_STANDBY_TO_ON) {
         _powerStatus = CEC_POWER_STATUS_TRANSITION_STANDBY_TO_ON;
-        sendKoganCode(&irsend, KOGAN_POWER);
+        //sendKoganCode(&irsend, KOGAN_POWER);
+        Wire.beginTransmission(I2C_SLAVE_ADDRESS);
+        Wire.write(TVCOMAND_power);
+        Wire.endTransmission();
         _turnedOnAt = millis();
-        irrecv.enableIRIn(); // Re-enable receiver
+        //irrecv.enableIRIn(); // Re-enable receiver
     }
 }
 
@@ -320,11 +330,14 @@ void CEC_TV::powerOff()
 {
     if(_powerStatus == CEC_POWER_STATUS_ON)
     {
-        sendKoganCode(&irsend, KOGAN_POWER);
+        //sendKoganCode(&irsend, KOGAN_POWER);
+        Wire.beginTransmission(I2C_SLAVE_ADDRESS);
+        Wire.write(TVCOMAND_power);
+        Wire.endTransmission();
         _powerStatus = CEC_POWER_STATUS_STANDBY;
         TransmitMsg(CEC_BROADCAST, CEC_STANDBY);
         DbgPrint("TODO: proper power off check\r\n");
-        irrecv.enableIRIn(); // Re-enable receiver
+        //irrecv.enableIRIn(); // Re-enable receiver
     }
     if (_powerStatus == CEC_POWER_STATUS_TRANSITION_STANDBY_TO_ON)
         DbgPrint("still transitioning!\r\n");
