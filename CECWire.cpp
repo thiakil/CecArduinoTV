@@ -111,13 +111,13 @@ void CEC_Electrical::ReceivedBit(bool state)
 
 unsigned long CEC_Electrical::LineError()
 {
-        //DbgPrint("%p: Line Error!\n", this);
-	if (_follower || _broadcast)
+    DbgPrint("%p: Line Error!\n", this);
+	/*if (_follower || _broadcast)
 	{
 		_secondaryState = CEC_RCV_LINEERROR;
 		Lower();
 		return micros() + 3600;
-	}
+	}*/
 	return ResetState() ? micros() : (unsigned long)-1;
 }
 

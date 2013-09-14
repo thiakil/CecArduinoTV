@@ -6,9 +6,12 @@
 #include "CEC_Codes.h"
 #include <IRremote.h>
 
-#define RECV_PIN 21
+//#define RECV_PIN 21
 
-#define DEFAULT_INPUT_ADDR 0x2000
+//atmega 328
+#define RECV_PIN 12
+
+#define DEFAULT_INPUT_ADDR 0x1000
 
 class CEC_TV : public CEC_Device
 {
