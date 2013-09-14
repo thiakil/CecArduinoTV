@@ -131,7 +131,7 @@ void loop()
     switch (c)
     {
       case '1':
-        device.TransmitMsg(4, CEC_STANDBY);
+        device.TransmitMsg(0xf, CEC_STANDBY);
         break;
       case '2':
         device.TransmitMsg(4, CEC_INFO_REQ_PHYS_ADDR);
@@ -147,7 +147,7 @@ void loop()
         device.TransmitMsg(5, CEC_MENU_UC_RELEASED);
         break;
       case 'p':
-        device.TransmitMsg(0xf, CEC_ROUTING_REQ_PATH, 0x20, 0x00);
+        device.TransmitMsg(0xf, CEC_ROUTING_REQ_PATH, 0x22, 0x00);
         break;
       case 'a':
         device.TransmitMsg(0xf, CEC_ROUTING_REQ_ACTIVE);
@@ -194,6 +194,9 @@ void loop()
         break;
       case 'r':
         changeKoganInput(&irsend, 4);
+        break;
+      case 'c':
+        sendKoganCode(&irsend, 0x0F9);
         break;
     }
   }

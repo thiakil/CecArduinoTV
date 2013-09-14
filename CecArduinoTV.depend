@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1377319139 source:e:\users\lex\documents\arduino\cecarduinotv\cecwire.cpp
+1378627532 source:e:\users\lex\documents\arduino\cecarduinotv\cecwire.cpp
 	"CECWire.h"
 
 1376795666 e:\users\lex\documents\arduino\cecarduinotv\cecwire.h
@@ -127,7 +127,7 @@
 	<Arduino.h>
 	"CEC_LogicalDevice.h"
 
-1377409005 source:e:\users\lex\documents\arduino\cecarduinotv\cecarduinotv.ino
+1378627428 source:e:\users\lex\documents\arduino\cecarduinotv\cecarduinotv.ino
 	"CEC_Device.h"
 	"CEC_Codes.h"
 	"CEC_TV.h"
@@ -196,14 +196,17 @@
 1362986950 e:\users\lex\downloads\codeblocks\arduino\hardware\arduino\variants\mega\pins_arduino.h
 	<avr/pgmspace.h>
 
-1377693804 e:\users\lex\documents\arduino\cecarduinotv\cec_tv.h
+1379161563 e:\users\lex\documents\arduino\cecarduinotv\cec_tv.h
 	<Arduino.h>
 	"CEC_Device.h"
 	"CEC_Codes.h"
 	<IRremote.h>
+	"IRModule/IRModule_config.h"
 
-1377688723 source:e:\users\lex\documents\arduino\cecarduinotv\cec_tv.cpp
+1378622914 source:e:\users\lex\documents\arduino\cecarduinotv\cec_tv.cpp
 	"CEC_TV.h"
 
 1377692645 e:\users\lex\downloads\codeblocks\arduino\libraries\irremote\irremote.h
+
+1379161499 e:\users\lex\documents\arduino\cecarduinotv\irmodule\irmodule_config.h
 
