@@ -6,6 +6,8 @@
 #include "CEC_Codes.h"
 #include <IRremote.h>
 
+#include "IRModule/IRModule_config.h"
+
 //#define RECV_PIN 21
 
 //atmega 328
