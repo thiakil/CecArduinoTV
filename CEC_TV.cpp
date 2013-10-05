@@ -9,6 +9,15 @@
 
 short currentInput = -1;
 
+void changeInputI2c(short input){
+    Wire.beginTransmission(I2C_SLAVE_ADDRESS);
+    Wire.write(TVCOMAND_changeinput);
+    Wire.write((byte)input);
+    Wire.write((byte)currentInput);
+    Wire.endTransmission();
+    currentInput = input;
+}
+
 void debugReceivedMsg(int source, int dest, unsigned char* buffer, int count){
     DbgPrint("%d -> %d (%d): ", source, dest, count);
     if (count){
@@ -120,12 +129,7 @@ void CEC_TV::OnReceive(int source, int dest, unsigned char* buffer, int count){
                     DbgPrint("changing to input %d\r\n", buffer[1]>>4 & 0xf);
                     //changeKoganInput(&irsend, buffer[1]>>4 & 0xf);
                     //irrecv.enableIRIn(); // Re-enable receiver
-                    Wire.beginTransmission(I2C_SLAVE_ADDRESS);
-                    Wire.write(TVCOMAND_changeinput);
-                    Wire.write(buffer[1]>>4 & 0xf);
-                    Wire.write(currentInput);
-                    Wire.endTransmission();
-                    currentInput = buffer[1]>>4 & 0xf;
+                    changeInputI2c(buffer[1]>>4 & 0xf);
                     TransmitMsgQ(source, CEC_OSD_REQ_OSD);
                 }
                 break;
@@ -480,33 +484,33 @@ void CEC_TV::loop()
             case REMOTE_1:
                 check_remote_protocol
                 delay(250);
-                changeKoganInput(&irsend, 1);
+                changeInputI2c(1);
                 break;
             case REMOTE_2:
                 check_remote_protocol
                 delay(250);
-                changeKoganInput(&irsend, 2);
+                changeInputI2c(2);
                 break;
             case REMOTE_3:
                 check_remote_protocol
                 delay(250);
-                changeKoganInput(&irsend, 3);
+                changeInputI2c(3);
                 break;
             case REMOTE_4:
                 check_remote_protocol
                 delay(250);
-                changeKoganInput(&irsend, 4);
+                changeInputI2c(4);
                 break;
             case REMOTE_0:
                 check_remote_protocol
                 delay(250);
                 currentInput = -1;//reset it
-                changeKoganInput(&irsend, 1);
+                changeInputI2c(1);
                 break;
             case REMOTE_GUIDE:
                 check_remote_protocol
                 delay(250);
-                sendKoganCode(&irsend, KOGAN_ASPECT);
+                //sendKoganCode(&irsend, KOGAN_ASPECT);
                 break;
             case REMOTE_UP:
                 check_remote_protocol

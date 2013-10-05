@@ -21,6 +21,9 @@ void sendKoganCode(IRsend* irsend, int code)
 void changeInput(IRsend* irsend, short hdmiInput, short currentInput)
 {
     //DbgPrint("current: %d, wanted: %d\r\n", currentInput, hdmiInput);
+    if (currentInput > 4 || hdmiInput > 4)
+      return;//sanity check for i2c weirdness debug
+      
     int numPresses = 0;
     bool down = true;
     if (currentInput == hdmiInput)
@@ -70,7 +73,7 @@ void receiveEvent(uint8_t howMany)
     
     //digitalWrite(4, HIGH);
 
-    int i2cCmd = TinyWireS.receive();
+    uint8_t i2cCmd = TinyWireS.receive();
     int param =0; 
     howMany--;
     
@@ -81,7 +84,7 @@ void receiveEvent(uint8_t howMany)
       case TVCOMAND_changeinput:
         if (howMany == 2)
         {
-          changeInput(&irsend, TinyWireS.receive(), TinyWireS.receive());
+          changeInput(&irsend, (byte)TinyWireS.receive(), (byte)TinyWireS.receive());
         }
         break;
       case TVCOMAND_aspect:

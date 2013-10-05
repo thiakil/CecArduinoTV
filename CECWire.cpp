@@ -112,12 +112,12 @@ void CEC_Electrical::ReceivedBit(bool state)
 unsigned long CEC_Electrical::LineError()
 {
     DbgPrint("%p: Line Error!\n", this);
-	/*if (_follower || _broadcast)
+	if (_follower || _broadcast)
 	{
 		_secondaryState = CEC_RCV_LINEERROR;
 		Lower();
 		return micros() + 3600;
-	}*/
+	}
 	return ResetState() ? micros() : (unsigned long)-1;
 }
 
@@ -191,7 +191,7 @@ unsigned long CEC_Electrical::Process()
 			}
 			// Illegal state.  Go back to CEC_IDLE to wait for a valid
 			// start bit
-//DbgPrint("1: %ld %ld\n", difftime, micros());
+DbgPrint("1: %ld %ld\n", difftime, micros());
 			waitTime = ResetState() ? micros() : (unsigned long)-1;
 			break;
 
@@ -207,7 +207,7 @@ unsigned long CEC_Electrical::Process()
 			}
 			// Illegal state.  Go back to CEC_IDLE to wait for a valid
 			// start bit
-//DbgPrint("2: %ld %ld\n", difftime, micros());
+DbgPrint("2: %ld %ld\n", difftime, micros());
 			waitTime = ResetState() ? micros() : (unsigned long)-1;
 			break;
 
@@ -299,6 +299,7 @@ unsigned long CEC_Electrical::Process()
 		// it will be needed when we support broadcast frames.
 		case CEC_RCV_ACK1:
 			{
+				DbgPrint("CEC_RCV_ACK1\r\n");
 				int ack;
 				if (difftime >= 400 && difftime <= 800)
 					ack = _broadcast ? CEC_ACK : CEC_NAK;
@@ -350,7 +351,7 @@ unsigned long CEC_Electrical::Process()
 			break;
 
 		case CEC_RCV_LINEERROR:
-			//DbgPrint("%p: Done signaling line error\n", this);
+			DbgPrint("%p: Done signaling line error\n", this);
 			Raise();
 			waitTime = ResetState() ? micros() : (unsigned long)-1;
 			break;
@@ -453,7 +454,7 @@ unsigned long CEC_Electrical::Process()
 		case CEC_XMIT_STARTBIT1:
 			if (!Raise())
 			{
-				//DbgPrint("%p: Received Line Error\n", this);
+				DbgPrint("%p: Received Line Error\n", this);
 				ResetTransmit(true);
 				break;
 			}
@@ -486,7 +487,7 @@ unsigned long CEC_Electrical::Process()
 		case CEC_XMIT_DATABIT1:
 			if (!Raise())
 			{
-				//DbgPrint("%p: Received Line Error\n", this);
+				DbgPrint("%p: Received Line Error\n", this);
 				ResetTransmit(true);
 				break;
 			}

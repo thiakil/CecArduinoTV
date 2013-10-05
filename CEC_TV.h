@@ -53,7 +53,7 @@ protected:
 
     byte testTVVoltage(){return CEC_POWER_STATUS_STANDBY;}
 
-    IRsend irsend;
+    //IRsend irsend;
     IRrecv irrecv;
 
     unsigned long _lastRemoteInputTime;

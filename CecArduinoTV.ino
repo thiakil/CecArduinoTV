@@ -55,7 +55,7 @@ void set_led(byte led, bool on){
 bool XX_GetLineState()
 {
   int state = digitalRead(IN_LINE);
-  return state == LOW;
+  return state == HIGH;
 }
 
 void XX_SetLineState(CEC_Device* device, bool state)
@@ -104,6 +104,8 @@ void setup()
   digitalWrite(LED1, HIGH);
   Serial.println("ready");
 
+  device.TransmitMsg(CEC_BROADCAST, CEC_INFO_PHYS_ADDR, 0, 0, 0);
+
   /*unsigned char buffer[4];
 
     buffer[0] = CEC_ROUTING_CHANGED;
@@ -118,7 +120,6 @@ void setup()
   //attachInterrupt(0, inputinterrupt,CHANGE);
 
 }
-IRsend irsend;
 
 void loop()
 {
@@ -147,7 +148,7 @@ void loop()
         device.TransmitMsg(5, CEC_MENU_UC_RELEASED);
         break;
       case 'p':
-        device.TransmitMsg(0xf, CEC_ROUTING_REQ_PATH, 0x22, 0x00);
+        device.TransmitMsg(0xf, CEC_ROUTING_REQ_PATH, 0x20, 0x00);
         break;
       case 'a':
         device.TransmitMsg(0xf, CEC_ROUTING_REQ_ACTIVE);
@@ -155,7 +156,10 @@ void loop()
       case 't':
           {
               unsigned char buffer[] = {0};
-              DbgPrint("ping: %d", device.TransmitWait(0x4, buffer, 0));
+              for (int addr = 1; addr< 0xf; addr++) {
+                DbgPrint("ping(%d): %d\r\n", addr, device.TransmitWait(addr, buffer, 0));
+              }
+              DbgPrint("end pings (%d)", millis());
               break;
           }
       /*case 'e':
@@ -183,7 +187,7 @@ void loop()
       case 'o':
         device.powerToggle();
         break;
-      case 'q':
+      /*case 'q':
         changeKoganInput(&irsend, 1);
         break;
       case 'w':
@@ -197,7 +201,7 @@ void loop()
         break;
       case 'c':
         sendKoganCode(&irsend, 0x0F9);
-        break;
+        break;*/
     }
   }
   //detachInterrupt(0);
