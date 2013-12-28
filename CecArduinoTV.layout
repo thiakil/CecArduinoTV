@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
 	<ActiveTarget name="Arduino Mega 1280" />
+	<File name="edid.cpp" open="1" top="0" tabpos="15" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1227" topLine="44" />
+		</Cursor>
+	</File>
 	<File name="edid.h" open="0" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="98" topLine="0" />
@@ -8,7 +13,7 @@
 	</File>
 	<File name="CEC_Device.cpp" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="1849" topLine="0" />
+			<Cursor1 position="281" topLine="0" />
 		</Cursor>
 	</File>
 	<File name="CEC_Device.h" open="1" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -28,7 +33,7 @@
 	</File>
 	<File name="CEC_TV.cpp" open="1" top="1" tabpos="11" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="11379" topLine="207" />
+			<Cursor1 position="0" topLine="96" />
 		</Cursor>
 	</File>
 	<File name="CEC_TV.h" open="1" top="0" tabpos="12" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -38,7 +43,7 @@
 	</File>
 	<File name="CecArduinoTV.ino" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="989" topLine="27" />
+			<Cursor1 position="447" topLine="117" />
 		</Cursor>
 	</File>
 	<File name="Common.cpp" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -53,7 +58,7 @@
 	</File>
 	<File name="CECWire.cpp" open="1" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="0" topLine="60" />
+			<Cursor1 position="8639" topLine="297" />
 		</Cursor>
 	</File>
 	<File name="CECWire.h" open="1" top="0" tabpos="10" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -73,12 +78,7 @@
 	</File>
 	<File name="Serial.h" open="1" top="0" tabpos="14" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="584" topLine="4" />
-		</Cursor>
-	</File>
-	<File name="edid.cpp" open="1" top="0" tabpos="15" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1227" topLine="44" />
+			<Cursor1 position="584" topLine="3" />
 		</Cursor>
 	</File>
 </CodeBlocks_layout_file>
