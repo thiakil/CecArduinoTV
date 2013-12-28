@@ -299,7 +299,7 @@ DbgPrint("2: %ld %ld\n", difftime, micros());
 		// it will be needed when we support broadcast frames.
 		case CEC_RCV_ACK1:
 			{
-				DbgPrint("CEC_RCV_ACK1\r\n");
+				//DbgPrint("CEC_RCV_ACK1\r\n");
 				int ack;
 				if (difftime >= 400 && difftime <= 800)
 					ack = _broadcast ? CEC_ACK : CEC_NAK;
