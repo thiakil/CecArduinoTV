@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1379165762 source:e:\users\lex\documents\arduino\cecarduinotv\cecwire.cpp
+1388407567 source:e:\users\lex\documents\arduino\cecarduinotv\cecwire.cpp
 	"CECWire.h"
 
 1376795666 e:\users\lex\documents\arduino\cecarduinotv\cecwire.h
@@ -127,18 +127,16 @@
 	<Arduino.h>
 	"CEC_LogicalDevice.h"
 
-1379590518 source:e:\users\lex\documents\arduino\cecarduinotv\cecarduinotv.ino
-	"CEC_Device.h"
+1397137753 source:e:\users\lex\documents\arduino\cecarduinotv\cecarduinotv.ino
+	"Common.h"
 	"CEC_Codes.h"
 	"CEC_TV.h"
-	<Wire.h>
 	<IRremote.h>
-	"edid.h"
-	"MemoryFree.h"
+	<RCSwitch.h>
 
 1376795666 e:\users\lex\documents\arduino\cecarduinotv\status.h
 
-1377267688 e:\users\lex\documents\arduino\cecarduinotv\cec_codes.h
+1397135428 e:\users\lex\documents\arduino\cecarduinotv\cec_codes.h
 
 1371033101 e:\users\lex\downloads\codeblocks\arduino\hardware\arduino\cores\arduino\arduino.h
 	<stdlib.h>
@@ -196,18 +194,137 @@
 1362986950 e:\users\lex\downloads\codeblocks\arduino\hardware\arduino\variants\mega\pins_arduino.h
 	<avr/pgmspace.h>
 
-1379218378 e:\users\lex\documents\arduino\cecarduinotv\cec_tv.h
+1397048686 e:\users\lex\documents\arduino\cecarduinotv\cec_tv.h
+	<stdarg.h>
 	<Arduino.h>
-	"CEC_Device.h"
+	<HardwareSerial.h>
 	"CEC_Codes.h"
+	"Message_defines.h"
+	"Common.h"
 	<IRremote.h>
-	"IRModule/IRModule_config.h"
 
-1382786478 source:e:\users\lex\documents\arduino\cecarduinotv\cec_tv.cpp
+1397137467 source:e:\users\lex\documents\arduino\cecarduinotv\cec_tv.cpp
 	"CEC_TV.h"
-	"Wire.h"
+	"Common.h"
+	<RCSwitch.h>
 
 1377692645 e:\users\lex\downloads\codeblocks\arduino\libraries\irremote\irremote.h
 
 1379163149 e:\users\lex\documents\arduino\cecarduinotv\irmodule\irmodule_config.h
+
+1389936622 e:\users\lex\documents\arduino\cecarduinotv\message_defines.h
+
+1378992175 e:\users\lex\downloads\codeblocks\arduino\libraries\irremote\irremoteint.h
+	<Arduino.h>
+	<WProgram.h>
+
+1390123596 source:\\xander\users\lex\documents\arduino\cecarduinotv\cec_tv.cpp
+	"CEC_TV.h"
+	"Common.h"
+	<RCSwitch.h>
+
+1390124472 \\xander\users\lex\documents\arduino\cecarduinotv\cec_tv.h
+	<stdarg.h>
+	<Arduino.h>
+	<HardwareSerial.h>
+	"CEC_Codes.h"
+	"Message_defines.h"
+	"Common.h"
+	<IRremote.h>
+
+1371033101 c:\users\lex\bin\codeblocks\arduino\hardware\arduino\cores\arduino\arduino.h
+	<stdlib.h>
+	<string.h>
+	<math.h>
+	<avr/pgmspace.h>
+	<avr/io.h>
+	<avr/interrupt.h>
+	"binary.h"
+	"WCharacter.h"
+	"WString.h"
+	"HardwareSerial.h"
+	"pins_arduino.h"
+
+1362986950 c:\users\lex\bin\codeblocks\arduino\hardware\arduino\cores\arduino\binary.h
+
+1362986950 c:\users\lex\bin\codeblocks\arduino\hardware\arduino\cores\arduino\wcharacter.h
+	<ctype.h>
+
+1371033133 c:\users\lex\bin\codeblocks\arduino\hardware\arduino\cores\arduino\wstring.h
+	<stdlib.h>
+	<string.h>
+	<ctype.h>
+	<avr/pgmspace.h>
+
+1362986950 c:\users\lex\bin\codeblocks\arduino\hardware\arduino\cores\arduino\hardwareserial.h
+	<inttypes.h>
+	"Stream.h"
+	"USBAPI.h"
+
+1371032829 c:\users\lex\bin\codeblocks\arduino\hardware\arduino\cores\arduino\stream.h
+	<inttypes.h>
+	"Print.h"
+
+1362986950 c:\users\lex\bin\codeblocks\arduino\hardware\arduino\cores\arduino\print.h
+	<inttypes.h>
+	<stdio.h>
+	"WString.h"
+	"Printable.h"
+
+1362986950 c:\users\lex\bin\codeblocks\arduino\hardware\arduino\cores\arduino\printable.h
+	<new.h>
+
+1362986950 c:\users\lex\bin\codeblocks\arduino\hardware\arduino\cores\arduino\new.h
+	<stdlib.h>
+
+1362986950 c:\users\lex\bin\codeblocks\arduino\hardware\arduino\cores\arduino\usbapi.h
+
+1362986950 c:\users\lex\bin\codeblocks\arduino\hardware\arduino\variants\mega\pins_arduino.h
+	<avr/pgmspace.h>
+
+1377267688 \\xander\users\lex\documents\arduino\cecarduinotv\cec_codes.h
+
+1389936622 \\xander\users\lex\documents\arduino\cecarduinotv\message_defines.h
+
+1377259408 \\xander\users\lex\documents\arduino\cecarduinotv\common.h
+	<windows.h>
+	<stdio.h>
+	<assert.h>
+
+1377692645 \\xander\users\lex\downloads\codeblocks\arduino\libraries\irremote\irremote.h
+
+1390124329 source:\\xander\users\lex\documents\arduino\cecarduinotv\cecarduinotv.ino
+	"Common.h"
+	"CEC_Codes.h"
+	"CEC_TV.h"
+	<IRremote.h>
+	<RCSwitch.h>
+
+1377266046 source:\\xander\users\lex\documents\arduino\cecarduinotv\common.cpp
+	<stdlib.h>
+	"Common.h"
+	<avr/io.h>
+	<avr/pgmspace.h>
+	<stdlib.h>
+	<string.h>
+	<util/delay.h>
+	<Arduino.h>
+
+1377090689 source:\\xander\users\lex\documents\arduino\cecarduinotv\edid.cpp
+	"Arduino.h"
+	"edid.h"
+	<Wire.h>
+	"Common.h"
+
+1376795666 \\xander\users\lex\documents\arduino\cecarduinotv\edid.h
+
+1380623742 c:\users\lex\bin\codeblocks\arduino\libraries\rcswitch\rcswitch.h
+	"Arduino.h"
+	"Energia.h"
+	"WProgram.h"
+
+1396770374 e:\users\lex\downloads\codeblocks\arduino\libraries\rcswitch\rcswitch.h
+	"Arduino.h"
+	"Energia.h"
+	"WProgram.h"
 

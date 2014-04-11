@@ -111,7 +111,7 @@ void CEC_Electrical::ReceivedBit(bool state)
 
 unsigned long CEC_Electrical::LineError()
 {
-    DbgPrint("%p: Line Error!\n", this);
+    DbgPrint("%p: Line Error!\r\n", this);
 	if (_follower || _broadcast)
 	{
 		_secondaryState = CEC_RCV_LINEERROR;
@@ -191,13 +191,13 @@ unsigned long CEC_Electrical::Process()
 			}
 			// Illegal state.  Go back to CEC_IDLE to wait for a valid
 			// start bit
-DbgPrint("1: %ld %ld\n", difftime, micros());
+//DbgPrint("1: %ld %ld\n", difftime, micros());
 			waitTime = ResetState() ? micros() : (unsigned long)-1;
 			break;
 
 		case CEC_RCV_STARTBIT2:
 			// This should be the falling edge of the start bit
-			if (difftime >= 4300 && difftime <= 4700)
+			if (difftime >= 4300 && difftime <= 4800)
 			{
 				// We've fully received the start bit.  Begin receiving
 				// a data bit
@@ -207,20 +207,20 @@ DbgPrint("1: %ld %ld\n", difftime, micros());
 			}
 			// Illegal state.  Go back to CEC_IDLE to wait for a valid
 			// start bit
-DbgPrint("2: %ld %ld\n", difftime, micros());
+//DbgPrint("2: %ld %ld\n", difftime, micros());
 			waitTime = ResetState() ? micros() : (unsigned long)-1;
 			break;
 
 		case CEC_RCV_DATABIT1:
 			// We've received the rising edge of the data bit
-			if (difftime >= 400 && difftime <= 800)
+			if (difftime >= 400 && difftime <= 900)
 			{
 				// We're receiving bit '1'
 				ReceivedBit(true);
 				_secondaryState = CEC_RCV_DATABIT2;
 				break;
 			}
-			else if (difftime >= 1300 && difftime <= 1700)
+			else if (difftime >= 1300 && difftime <= 1800)
 			{
 				// We're receiving bit '0'
 				ReceivedBit(false);
@@ -234,7 +234,7 @@ DbgPrint("2: %ld %ld\n", difftime, micros());
 
 		case CEC_RCV_DATABIT2:
 			// We've received the falling edge of the data bit
-			if (difftime >= 2050 && difftime <= 2750)
+			if (difftime >= 2050 && difftime <= 2850)
 			{
 				if (_tertiaryState == CEC_RCV_BIT_EOM)
 				{

@@ -313,7 +313,7 @@
 					<Variable name="MCU" value="atmega328p" />
 					<Variable name="MCU_CLOCK" value="16" />
 					<Variable name="UPLOAD_BAUDRATE" value="57600" />
-					<Variable name="UPLOAD_PORT" value="COM18" />
+					<Variable name="UPLOAD_PORT" value="COM5" />
 				</Environment>
 			</Target>
 			<Target title="Arduino Nano (168)">
@@ -570,7 +570,7 @@
 					<Variable name="MCU" value="atmega1280" />
 					<Variable name="MCU_CLOCK" value="16" />
 					<Variable name="UPLOAD_BAUDRATE" value="57600" />
-					<Variable name="UPLOAD_PORT" value="COM11" />
+					<Variable name="UPLOAD_PORT" value="COM14" />
 				</Environment>
 			</Target>
 			<Target title="Arduino Mega 8">
@@ -647,18 +647,49 @@
 					<Variable name="UPLOAD_PORT" value="" />
 				</Environment>
 			</Target>
+			<Target title="Arduino Mega 1280 (LAPTOP)">
+				<Option output="build/CecArduinoTV_${BOARD_ID}.elf" prefix_auto="1" extension_auto="0" />
+				<Option object_output="build" />
+				<Option type="1" />
+				<Option compiler="avrgcc" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-x c++" />
+					<Add option="-mmcu=$(MCU)" />
+					<Add option="-DF_CPU=16000000L" />
+					<Add option="-D__AVR_ATmega1280__" />
+					<Add directory="$(ARDUINO_DIR)/hardware/arduino/cores/arduino" />
+					<Add directory="$(ARDUINO_DIR)/libraries" />
+					<Add directory="$(ARDUINO_DIR)/hardware/arduino/variants/mega" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add option="-mmcu=$(MCU)" />
+					<Add option='&quot;$(PROJECT_DIR)${TARGET_OUTPUT_DIR}/lib_${BOARD_ID}_${MCU_CLOCK}.a&quot;' />
+					<Add option='&quot;$(PROJECT_DIR)${TARGET_OUTPUT_DIR}/core_${BOARD_ID}_${MCU_CLOCK}.a&quot;' />
+				</Linker>
+				<ExtraCommands>
+					<Add before='$(TARGET_COMPILER_DIR)ArduinoUploader &quot;$(PROJECT_DIR).&quot; $(BOARD_ID) - $(MCU_CLOCK) 0 &quot;$(PROJECT_DIR)${TARGET_OUTPUT_DIR}/lib_${BOARD_ID}_${MCU_CLOCK}.a&quot; &quot;$(PROJECT_DIR)${TARGET_OUTPUT_DIR}/core_${BOARD_ID}_${MCU_CLOCK}.a&quot;' />
+					<Add after='avr-objcopy -O ihex -R .eeprom -R .eesafe &quot;$(TARGET_OUTPUT_FILE)&quot; &quot;$(TARGET_OUTPUT_FILE).hex&quot;' />
+					<Add after='avr-objcopy --no-change-warnings -j .eeprom --change-section-lma .eeprom=0 -O ihex &quot;$(TARGET_OUTPUT_FILE)&quot; &quot;$(TARGET_OUTPUT_FILE).eep.hex&quot;' />
+					<Add after='avr-size --mcu=$(MCU) --format=avr &quot;$(TARGET_OUTPUT_FILE)&quot;' />
+				</ExtraCommands>
+				<Environment>
+					<Variable name="BOARD" value="Arduino Mega 1280" />
+					<Variable name="BOARD_ID" value="mega1280" />
+					<Variable name="MCU" value="atmega1280" />
+					<Variable name="MCU_CLOCK" value="16" />
+					<Variable name="UPLOAD_BAUDRATE" value="57600" />
+					<Variable name="UPLOAD_PORT" value="COM7" />
+				</Environment>
+			</Target>
 		</Build>
 		<Compiler>
 			<Add directory="." />
 			<Add directory="../../../Downloads/CodeBlocks/arduino/libraries/IRremote" />
+			<Add directory="$(ARDUINO_DIR)/libraries/rcswitch" />
 		</Compiler>
-		<Unit filename="CECWire.cpp" />
-		<Unit filename="CECWire.h" />
 		<Unit filename="CEC_Codes.h" />
-		<Unit filename="CEC_Device.cpp" />
-		<Unit filename="CEC_Device.h" />
-		<Unit filename="CEC_LogicalDevice.cpp" />
-		<Unit filename="CEC_LogicalDevice.h" />
 		<Unit filename="CEC_TV.cpp" />
 		<Unit filename="CEC_TV.h" />
 		<Unit filename="CecArduinoTV.ino">
@@ -667,19 +698,9 @@
 		</Unit>
 		<Unit filename="Common.cpp" />
 		<Unit filename="Common.h" />
-		<Unit filename="MemoryFree.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="MemoryFree.h" />
-		<Unit filename="Serial.cpp" />
-		<Unit filename="Serial.h" />
-		<Unit filename="cmdcodes.h" />
-		<Unit filename="cmdhandler.cpp" />
-		<Unit filename="cmdhandler.h" />
+		<Unit filename="Message_defines.h" />
 		<Unit filename="edid.cpp" />
 		<Unit filename="edid.h" />
-		<Unit filename="status.cpp" />
-		<Unit filename="status.h" />
 		<Extensions>
 			<code_completion>
 				<search_path add="..\..\..\Downloads\CodeBlocks\arduino\libraries\IRremote" />

@@ -1,19 +1,22 @@
 #ifndef CEC_TV_H_INCLUDED
 #define CEC_TV_H_INCLUDED
 
+#include <stdarg.h>
 #include <Arduino.h>
-#include "CEC_Device.h"
+#include <HardwareSerial.h>
 #include "CEC_Codes.h"
+#include "Message_defines.h"
+#include "Common.h"
 #include <IRremote.h>
-
-#include "IRModule/IRModule_config.h"
 
 //#define RECV_PIN 21
 
 //atmega 328
 #define RECV_PIN 12
 
-#define DEFAULT_INPUT_ADDR 0x1000
+// IRTX is 9 on mega with timer2
+
+#define DEFAULT_INPUT_ADDR 0x1100
 
 typedef struct logical_device_info {
 char* osd_name,
@@ -22,29 +25,68 @@ cec_physical_address phy_addr,
 cec_version cec_ver,
 } logical_device_info;
 
-class CEC_TV : public CEC_Device
+typedef enum {
+		CDT_TV,
+		CDT_RECORDING_DEVICE,
+		CDT_PLAYBACK_DEVICE,
+		CDT_TUNER,
+		CDT_AUDIO_SYSTEM,
+		CDT_OTHER,				// Not a real CEC type..
+	} CEC_DEVICE_TYPE;
+
+class CEC_TV
 {
 public:
-  CEC_TV()
-  : CEC_Device(0)
-  , _sendUCTo(0)
+  CEC_TV(HardwareSerial* serialinterface):
+  _sendUCTo(0)
   , _turnedOnAt(0)
   , irrecv(RECV_PIN)
   , _lastRemoteInputTime(0)
   , _lastRemoteInputCode(0)
-  , _activeSrcBroadcast(0)
-  , _activeSrcBroadcastForStandby(false)
+  , _logicalAddress(0)
+  , active_src1(0)
+  , active_src2(0)
   {
-      Promiscuous = true; //Relay all line traffic
+      CECSerial = serialinterface;
       _powerStatus = testTVVoltage();
       irrecv.enableIRIn(); // Start the receiver
   };
   virtual ~CEC_TV(){};
+  void Initialize()
+  {
+      CECSerial->write(MESSAGE_ENABLE_SEND);
+      CECSerial->write(0);//phy1
+      CECSerial->write(0);//phy2
+      CECSerial->write(CDT_TV);
+      int retval = CECBlockRead();
+      DbgPrint("initialised %d\r\n", retval);
+  };
   void checkStartupTimeout();
   void powerOff();
   void powerToggle();
   void loop();
   void sendUC(unsigned char UCCode);
+
+    bool TransmitMsg(int targetAddress, int count, ...)
+    {
+        va_list ap;
+        va_start(ap, count);
+        CECSerial->write(MESSAGE_SEND_WITH_RESULT);
+        CECSerial->write(count+1);
+        CECSerial->write(targetAddress);
+        //DbgPrint("%d, %d, %X, ", MESSAGE_SEND_WITH_RESULT, count+1, targetAddress);
+        for (int i = 0; i < count; i++){
+            unsigned char arg = va_arg(ap, unsigned int);
+            CECSerial->write(arg);
+            //Serial.print(arg,HEX); Serial.print(" ");
+        }
+        va_end(ap);
+        //Serial.println(".");
+        return CECBlockRead();
+    };
+
+    int CECAvailable() { return CECSerial->available(); };
+    int CECBlockRead() { while (!CECAvailable()); return CECSerial->read(); };
 
 protected:
     logical_device_info devices[0xE];
@@ -60,20 +102,24 @@ protected:
 
     byte _powerStatus;
     unsigned long _turnedOnAt;
-    unsigned long _activeSrcBroadcast;
-    bool _activeSrcBroadcastForStandby;//if true no response = turn off. if false, request stream path (default hdmi input if unknown input)
     unsigned char _sendUCTo;
     void powerOn();
 
-    void broadcastForActiveSource(bool noResponseTurnOff = false);
-
     byte testTVVoltage(){return CEC_POWER_STATUS_STANDBY;}
 
-    //IRsend irsend;
+    IRsend irsend;
     IRrecv irrecv;
+
+    short _logicalAddress;
 
     unsigned long _lastRemoteInputTime;
     unsigned long _lastRemoteInputCode;
+
+    byte active_src1;
+    byte active_src2;
+
+    HardwareSerial* CECSerial;
+
 };
 
 class CEC_LogicalDeviceState

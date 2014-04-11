@@ -1,30 +1,78 @@
-#ifndef CEC_TV_H__
-#define CEC_TV_H__
-
 #define DEBUG_CODES
 //#define DEBUG_IRCODES
 
 #include "CEC_TV.h"
-#include "Wire.h"
+#include "Common.h"
 
-short currentInput = -1;
+#include <RCSwitch.h>
+extern RCSwitch subSwitch;
 
-void changeInputI2c(short input){
-    Wire.beginTransmission(I2C_SLAVE_ADDRESS);
-    Wire.write(TVCOMAND_changeinput);
-    Wire.write((byte)input);
-    Wire.write((byte)currentInput);
-    Wire.endTransmission();
-    currentInput = input;
+#define SWITCH_CODE_0_ON 1656842
+#define SWITCH_CODE_0_OFF 1656834
+
+static const char* vendor_tostring(const cec_vendor_id vendor)
+{
+  switch (vendor)
+  {
+  case CEC_VENDOR_SAMSUNG:
+    return "Samsung";
+  case CEC_VENDOR_LG:
+    return "LG";
+  case CEC_VENDOR_PANASONIC:
+    return "Panasonic";
+  case CEC_VENDOR_PIONEER:
+    return "Pioneer";
+  case CEC_VENDOR_ONKYO:
+    return "Onkyo";
+  case CEC_VENDOR_YAMAHA:
+    return "Yamaha";
+  case CEC_VENDOR_PHILIPS:
+    return "Philips";
+  case CEC_VENDOR_SONY:
+    return "Sony";
+  case CEC_VENDOR_TOSHIBA:
+  case CEC_VENDOR_TOSHIBA2:
+    return "Toshiba";
+  case CEC_VENDOR_AKAI:
+    return "Akai";
+  case CEC_VENDOR_AOC:
+    return "AOC";
+  case CEC_VENDOR_BENQ:
+    return "Benq";
+  case CEC_VENDOR_DAEWOO:
+    return "Daewoo";
+  case CEC_VENDOR_GRUNDIG:
+    return "Grundig";
+  case CEC_VENDOR_MEDION:
+    return "Medion";
+  case CEC_VENDOR_SHARP:
+    return "Sharp";
+  case CEC_VENDOR_VIZIO:
+    return "Vizio";
+  case CEC_VENDOR_BROADCOM:
+    return "Broadcom";
+  case CEC_VENDOR_LOEWE:
+    return "Loewe";
+  case CEC_VENDOR_DENON:
+    return "Denon";
+  case CEC_VENDOR_MARANTZ:
+    return "Marantz";
+  case CEC_VENDOR_HARMAN_KARDON:
+    return "Harman/Kardon";
+  case CEC_VENDOR_PULSE_EIGHT:
+    return "Pulse Eight";
+  default:
+    return "Unknown";
+  }
 }
 
 void debugReceivedMsg(int source, int dest, unsigned char* buffer, int count){
     DbgPrint("%d -> %d (%d): ", source, dest, count);
     if (count){
+        #ifdef DEBUG_CODES
         switch(buffer[0]){
-            #ifdef DEBUG_CODES
-            case CEC_FEATURE_ABORT: DbgPrint("FEATURE_ABORT"); break;
-            case CEC_OTP_IMAGE_ON: DbgPrint("IMAGE_ON"); break;
+            case CEC_FEATURE_ABORT: Serial.print("FEATURE_ABORT"); break;
+            case CEC_OTP_IMAGE_ON: Serial.print("IMAGE_ON"); break;
             //case CEC_TUNER_UP: DbgPrint("CEC_TUNER_UP"); break;
             //case CEC_TUNER_DOWN: DbgPrint("CEC_TUNER_DOWN"); break;
 //                case CEC_TUNER_STATUS: DbgPrint("CEC_TUNER_STATUS"); break;
@@ -32,70 +80,73 @@ void debugReceivedMsg(int source, int dest, unsigned char* buffer, int count){
 //                case CEC_OTR_REC_ON: DbgPrint("CEC_OTR_REC_ON"); break;
 //                case CEC_OTR_REC_STATUS: DbgPrint("CEC_OTR_REC_STATUS"); break;
 //                case CEC_OTR_REC_OFF: DbgPrint("CEC_OTR_REC_OFF"); break;
-            case CEC_OTP_TEXT_ON: DbgPrint("TEXT_ON"); break;
-            case CEC_OTR_REC_SCREEN: DbgPrint("REC_SCREEN"); break;
+            case CEC_OTP_TEXT_ON: Serial.print("TEXT_ON"); break;
+            case CEC_OTR_REC_SCREEN: Serial.print("REC_SCREEN"); break;
                 /*case CEC_DECK_REQ_STATUS: DbgPrint("CEC_DECK_REQ_STATUS"); break;
                 case CEC_DECK_STATUS: DbgPrint("CEC_DECK_STATUS"); break;*/
-                case CEC_INFO_LANG: DbgPrint("CEC_INFO_LANG"); break;
+                case CEC_INFO_LANG: Serial.print("CEC_INFO_LANG"); break;
 //                case CEC_TIMER_CLEAR_ANALOG: DbgPrint("CEC_TIMER_CLEAR_ANALOG"); break;
 //                case CEC_TIMER_SET_ANALOG: DbgPrint("CEC_TIMER_SET_ANALOG"); break;
 //                case CEC_TIMER_STATUS: DbgPrint("CEC_TIMER_STATUS"); break;
-            case CEC_STANDBY: DbgPrint("STANDBY"); break;
+            case CEC_STANDBY: Serial.print("STANDBY"); break;
             //case CEC_DECK_PLAY: DbgPrint("CEC_DECK_PLAY"); break;
             //case CEC_DECK_CTRL: DbgPrint("CEC_DECK_CTRL"); break;
 //                case CEC_TIMER_STATUS_CLEARED: DbgPrint("CEC_TIMER_STATUS_CLEARED"); break;
-                case CEC_MENU_UC_PRESSED: DbgPrint("CEC_MENU_UC_PRESSED"); break;
-            case CEC_OSD_REQ_OSD: DbgPrint("OSD_REQ_OSD"); break;
-            case CEC_OSD_SET_OSD: DbgPrint("OSD_SET_OSD"); break;
-            case CEC_OSD_SEND: DbgPrint("CEC_OSD_SEND"); break;
+                case CEC_MENU_UC_PRESSED: Serial.print("CEC_MENU_UC_PRESSED"); break;
+            case CEC_OSD_REQ_OSD: Serial.print("OSD_REQ_OSD"); break;
+            case CEC_OSD_SET_OSD: Serial.print("OSD_SET_OSD"); break;
+            case CEC_OSD_SEND: Serial.print("CEC_OSD_SEND"); break;
 //                case CEC_TIMER_SET_TITLE: DbgPrint("CEC_TIMER_SET_TITLE"); break;
-                case CEC_AUDIO_MODE_REQ: DbgPrint("CEC_AUDIO_MODE_REQ"); break;
-                case CEC_AUDIO_STATUS_REQ: DbgPrint("CEC_AUDIO_STATUS_REQ"); break;
-                case CEC_AUDIO_MODE_SET: DbgPrint("CEC_AUDIO_MODE_SET"); break;
-                case CEC_AUDIO_STATUS: DbgPrint("CEC_AUDIO_STATUS"); break;
-                case CEC_Give_System_Audio_Mode_Status: DbgPrint("CEC_Give_System_Audio_Mode_Status"); break;
-                case CEC_AUDIO_MODE: DbgPrint("CEC_AUDIO_MODE"); break;
-            case CEC_ROUTING_CHANGED: DbgPrint("CEC_ROUTING_CHANGED"); break;
-            case CEC_ROUTING_INFO: DbgPrint("ROUTING_INFO"); break;
-            case CEC_ROUTING_ACTIVE: DbgPrint("ROUTING_ACTIVE"); break;
-            case CEC_INFO_REQ_PHYS_ADDR: DbgPrint("INFO_REQ_PHYS_ADDR"); break;
-            case CEC_INFO_PHYS_ADDR: DbgPrint("INFO_PHYS_ADDR"); break;
-            case CEC_ROUTING_REQ_ACTIVE: DbgPrint("ROUTING_REQ_ACTIVE"); break;
-            case CEC_ROUTING_REQ_PATH: DbgPrint("ROUTING_REQ_PATH"); break;
-            case CEC_VENDOR_ID: DbgPrint("VENDOR_ID"); break;
+                case CEC_AUDIO_MODE_REQ: Serial.print("CEC_AUDIO_MODE_REQ"); break;
+                case CEC_AUDIO_STATUS_REQ: Serial.print("CEC_AUDIO_STATUS_REQ"); break;
+                case CEC_AUDIO_MODE_SET: Serial.print("CEC_AUDIO_MODE_SET"); break;
+                case CEC_AUDIO_STATUS: Serial.print("CEC_AUDIO_STATUS"); break;
+                case CEC_Give_System_Audio_Mode_Status: Serial.print("CEC_Give_System_Audio_Mode_Status"); break;
+                case CEC_AUDIO_MODE: Serial.print("CEC_AUDIO_MODE"); break;
+            case CEC_ROUTING_CHANGED: Serial.print("CEC_ROUTING_CHANGED"); break;
+            case CEC_ROUTING_INFO: Serial.print("ROUTING_INFO"); break;
+            case CEC_ROUTING_ACTIVE: Serial.print("ROUTING_ACTIVE"); break;
+            case CEC_INFO_REQ_PHYS_ADDR: Serial.print("INFO_REQ_PHYS_ADDR"); break;
+            case CEC_INFO_PHYS_ADDR: Serial.print("INFO_PHYS_ADDR"); break;
+            case CEC_ROUTING_REQ_ACTIVE: Serial.print("ROUTING_REQ_ACTIVE"); break;
+            case CEC_ROUTING_REQ_PATH: Serial.print("ROUTING_REQ_PATH"); break;
+            case CEC_VENDOR_ID: Serial.print("VENDOR_ID"); break;
             //case CEC_VENDOR_COMMAND: DbgPrint("CEC_VENDOR_COMMAND"); break;
             //case CEC_VENDOR_REMOTE_BDOWN: DbgPrint("CEC_VENDOR_REMOTE_BDOWN"); break;
             //case CEC_VENDOR_REMOTE_BUP: DbgPrint("CEC_VENDOR_REMOTE_BUP"); break;
             //case CEC_VENDOR_ID_REQ: DbgPrint("CEC_VENDOR_ID_REQ"); break;
-            case CEC_MENU_REQ: DbgPrint("MENU_REQ"); break;
-            case CEC_MENU_STATUS: DbgPrint("MENU_STATUS"); break;
-            case CEC_POWER_REQ_STATUS: DbgPrint("POWER_REQ_STATUS"); break;
-            case CEC_POWER_STATUS: DbgPrint("POWER_STATUS"); break;
+            case CEC_MENU_REQ: Serial.print("MENU_REQ"); break;
+            case CEC_MENU_STATUS: Serial.print("MENU_STATUS"); break;
+            case CEC_POWER_REQ_STATUS: Serial.print("POWER_REQ_STATUS"); break;
+            case CEC_POWER_STATUS: Serial.print("POWER_STATUS"); break;
             //case CEC_INFO_LANG_REQ: DbgPrint("CEC_INFO_LANG_REQ"); break;
 //                case CEC_TUNER_SELECT_ANALOG: DbgPrint("CEC_TUNER_SELECT_ANALOG"); break;
 //                case CEC_TUNER_SELECT_DIGITAL: DbgPrint("CEC_TUNER_SELECT_DIGITAL"); break;
 //                case CEC_TIMER_SET_DIGITAL: DbgPrint("CEC_TIMER_SET_DIGITAL"); break;
 //                case CEC_TIMER_CLEAR_DIGITAL: DbgPrint("CEC_TIMER_CLEAR_DIGITAL"); break;
 //                case CEC_AUDIO_RATE: DbgPrint("CEC_AUDIO_RATE"); break;
-            case CEC_ROUTING_INACTIVE: DbgPrint("ROUTING_INACTIVE"); break;
-            case CEC_INFO_VERSION: DbgPrint("INFO_VERSION"); break;
+            case CEC_ROUTING_INACTIVE: Serial.print("ROUTING_INACTIVE"); break;
+            case CEC_INFO_VERSION: Serial.print("INFO_VERSION"); break;
             //case CEC_VENDOR_CEC_VERSION: DbgPrint("CEC_VENDOR_CEC_VERSION"); break;
             //case CEC_INFO_VERSION_REQ: DbgPrint("CEC_INFO_VERSION_REQ"); break;
             //case CEC_VENDOR_CEC_VERSION_REQ: DbgPrint("CEC_VENDOR_CEC_VERSION_REQ"); break;
             //case CEC_VENDOR_COMMAND_ID: DbgPrint("CEC_VENDOR_COMMAND_ID"); break;
             //case CEC_TIMER_CLEAR_EXTERNAL: DbgPrint("CEC_TIMER_CLEAR_EXTERNAL"); break;
             //case CEC_TIMER_SET_EXTERNAL: DbgPrint("CEC_TIMER_SET_EXTERNAL"); break;
-            #endif//#DEBUG_CODES
             default: DbgPrint("unknown (%d)", buffer[0]); break;
         }
+        #endif//#DEBUG_CODES
+        #ifndef DEBUG_CODES
+            DbgPrint("%d", buffer[0]);
+        #endif
         DbgPrint("\r\n");
         if (count > 1) {
             for (int i = 1; i < count; i++)
             DbgPrint("%02X ", buffer[i]);
-            DbgPrint("\r\n");
+            Serial.print("\r\n");
         }
     } else {
-        DbgPrint("Ping \r\n");
+        Serial.print("Ping \r\n");
     }
 }
 
@@ -104,7 +155,7 @@ void CEC_TV::OnReceive(int source, int dest, unsigned char* buffer, int count){
         debugReceivedMsg(source, dest, buffer, count);
     //#endif //#DEBUG_CODES
 
-    if (count && (dest == _logicalAddress || dest == CEC_BROADCAST)){
+    if (count /*&& (dest == _logicalAddress || dest == CEC_BROADCAST)*/){
         switch(buffer[0]){
             case CEC_OTP_IMAGE_ON:
             case CEC_OTP_TEXT_ON:
@@ -114,30 +165,39 @@ void CEC_TV::OnReceive(int source, int dest, unsigned char* buffer, int count){
                 powerOff();
                 break;
             case CEC_INFO_VERSION_REQ:
-                TransmitMsgQ(source, CEC_INFO_VERSION, 0x04);//hdmi 1.3a
+                TransmitMsg(source, 2, CEC_INFO_VERSION, 0x04);//hdmi 1.3a
             case CEC_INFO_VERSION:
                 break;
             case CEC_INFO_REQ_PHYS_ADDR:
-                TransmitMsgQ(source, CEC_INFO_PHYS_ADDR, _physicalAddress >> 8, _physicalAddress & 0xFF, _deviceType);
+                TransmitMsg(source, 4, CEC_INFO_PHYS_ADDR, 0, 0, CDT_TV);
                 break;
             case CEC_POWER_REQ_STATUS:
-                TransmitMsgQ(source, CEC_POWER_STATUS, _powerStatus);
+                TransmitMsg(source, 2, CEC_POWER_STATUS, _powerStatus);
                 break;
             case CEC_ROUTING_ACTIVE:
-                if (_powerStatus == CEC_POWER_STATUS_ON)
+                /*if (_powerStatus == CEC_POWER_STATUS_ON)
                 {
                     _activeSrcBroadcast = 0;
                     DbgPrint("changing to input %d\r\n", buffer[1]>>4 & 0xf);
                     //changeKoganInput(&irsend, buffer[1]>>4 & 0xf);
                     //irrecv.enableIRIn(); // Re-enable receiver
                     changeInputI2c(buffer[1]>>4 & 0xf);
-                    TransmitMsgQ(source, CEC_OSD_REQ_OSD);
-                }
+
+                }*/
+                active_src1 = buffer[1];
+                active_src2 = buffer[2];
+                DbgPrint("Got active src of %02X.%02X\n", active_src1, active_src2);
+                DbgPrint("Asking for OSD: %d\n", TransmitMsg(source, 1,CEC_OSD_REQ_OSD));
+                DbgPrint("Asking for audio mode: %d\n", TransmitMsg(5, 3, CEC_AUDIO_MODE_REQ, active_src1, active_src2));
                 break;
+            case CEC_ROUTING_INFO:
+                active_src1 = buffer[3];
+                active_src2 = buffer[4];
+                TransmitMsg(5, 3, CEC_AUDIO_MODE_REQ, active_src1, active_src2);
             case CEC_ROUTING_INACTIVE:
-                if (_powerStatus == CEC_POWER_STATUS_ON)
+                /*if (_powerStatus == CEC_POWER_STATUS_ON)
                     broadcastForActiveSource(true);//this probably shows up with nothing as other sources assume they're not active, but we check to be sure.
-                    DbgPrint("TODO 139, cectv\r\n");
+                    DbgPrint("TODO 139, cectv\r\n");*/
                 break;
             case CEC_MENU_STATUS:
                 if (buffer[1] == CEC_MENU_STATUS_ACTIVATED)
@@ -150,41 +210,60 @@ void CEC_TV::OnReceive(int source, int dest, unsigned char* buffer, int count){
                     DbgPrint("device at logical %d is ", source);
                     switch (buffer[1]){
                         case CEC_POWER_STATUS_ON:
-                            DbgPrint("On");
+                            Serial.print("On");
                             break;
                         case CEC_POWER_STATUS_STANDBY:
-                            DbgPrint("on Standby");
+                            Serial.print("on Standby");
                             break;
                         case CEC_POWER_STATUS_TRANSITION_STANDBY_TO_ON:
-                            DbgPrint("Turning On");
+                            Serial.print("Turning On");
                             break;
                         case CEC_POWER_STATUS_TRANSITION_ON_TO_STANDBY:
-                            DbgPrint("Turning Off");
+                            Serial.print("Turning Off");
                             break;
                         default:
                             DbgPrint("UNKNOWN STATUS (%d)", buffer[1]);
                             break;
                     }
-                    DbgPrint("\r\n");
+                    Serial.print("\r\n");
                 #endif
+                break;
             case CEC_INFO_PHYS_ADDR:
+                DbgPrint("Device at logical %X is at %02X%02X device type %02X\r\n", source, buffer[1],buffer[2], buffer[3]);
                 break;
             case CEC_OSD_SET_OSD:
+                #ifdef DEBUG_CODES
                 {
                     short osdLen = count -1;
                     if (osdLen){
                         char* osdName = new char[osdLen];
                         memcpy(osdName, buffer+1, osdLen);
                         osdName[osdLen] = 0;
-                        DbgPrint("Device at logical %d is known as \"%s\"\r\n", source, osdName);
+                        DbgPrint("Device at logical %X is known as \"%s\"\r\n", source, osdName);
                         delete osdName;
                     }
                     break;
                 }
+                #endif
+            case CEC_AUDIO_MODE_SET://this tells us that the receiver is on/off
+                subSwitch.send(buffer[1] ? SWITCH_CODE_0_ON : SWITCH_CODE_0_OFF, 24);
+                DbgPrint("AUdio mode set: %x\r\n", buffer[1]);
+                break;
+            case CEC_VENDOR_ID:
+                {
+                    long vendorid = (long)buffer[1] << 16 | (long)buffer[2] << 8 | buffer[3];
+                    DbgPrint("Device at logical %X is a %s (%06lX)\n", source, vendor_tostring((cec_vendor_id)vendorid), vendorid);
+                    break;
+                }
+            //no response messages:
+            case CEC_FEATURE_ABORT:
+            case CEC_AUDIO_STATUS://receiver giving volume status
+                break;
             default:
-                if (dest == _logicalAddress)//dont wanna do for bcast
-                    DbgPrint("ABORT!\r\n");
-                    //TransmitMsg(source, CEC_FEATURE_ABORT, CEC_ABORT_UNRECOGNIZED);
+                if (dest != CEC_BROADCAST){//dont wanna do for bcast
+                    Serial.print("ABORT!\r\n");
+                    TransmitMsg(source, 2, CEC_FEATURE_ABORT, CEC_ABORT_UNRECOGNIZED);
+                }
                 break;
         }
     }
@@ -248,61 +327,14 @@ void sendKoganCode(IRsend* irsend, int code)
     irsend->sendKogan(code, 32);
 }
 
-//6th item is hdmi 1
-void changeKoganInput(IRsend* irsend, short hdmiInput)
-{
-    DbgPrint("current: %d, wanted: %d\r\n", currentInput, hdmiInput);
-    int numPresses = 0;
-    bool down = true;
-    if (currentInput == hdmiInput)
-        return;
-    if (currentInput == -1)//its unknown
-    {
-        hdmiInput--;//make it 0 based
-        numPresses = 2 + hdmiInput;//2 is from componenet
-        //sendKoganCode(irsend, KOGAN_DTV);
-        //delay(2000);
-        sendKoganCode(irsend, 0x0F9);//switch to componenet
-        sendKoganCode(irsend, 0x0F9);//switch to componenet
-        delay(KOGAN_DELAY*2);
-    } else if (currentInput < hdmiInput) {
-        numPresses = hdmiInput - currentInput;
-    } else {
-        numPresses = currentInput - hdmiInput;
-        down = false;
-    }
-    DbgPrint("presses: %d\r\n", numPresses);
-
-    sendKoganCode(irsend, KOGAN_INPUT);
-    delay(KOGAN_DELAY*2);
-    for (int i=0; i < numPresses; i++){
-        if (down)
-            sendKoganCode(irsend, KOGAN_DOWN);
-        else
-            sendKoganCode(irsend, KOGAN_UP);
-        delay(KOGAN_DELAY);
-    }
-    sendKoganCode(irsend, KOGAN_ENTER);
-    currentInput = hdmiInput;
-}
-
 void CEC_TV::powerOn(){
     if (_powerStatus != CEC_POWER_STATUS_ON && _powerStatus != CEC_POWER_STATUS_TRANSITION_STANDBY_TO_ON) {
         _powerStatus = CEC_POWER_STATUS_TRANSITION_STANDBY_TO_ON;
-        //sendKoganCode(&irsend, KOGAN_POWER);
-        Wire.beginTransmission(I2C_SLAVE_ADDRESS);
-        Wire.write(TVCOMAND_power);
-        Wire.endTransmission();
+        sendKoganCode(&irsend, KOGAN_POWER);
         _turnedOnAt = millis();
-        //irrecv.enableIRIn(); // Re-enable receiver
+        irrecv.enableIRIn(); // Re-enable receiver
+        //TransmitMsg(5, CEC_AUDIO_MODE_REQ, 0x10, 0x00);
     }
-}
-
-void CEC_TV::broadcastForActiveSource(bool noResponseTurnOff)
-{
-    TransmitMsgQ(0xf, CEC_ROUTING_REQ_ACTIVE);//is called from within onreceive too
-    _activeSrcBroadcastForStandby = noResponseTurnOff;
-    _activeSrcBroadcast = millis();
 }
 
 void CEC_TV::checkStartupTimeout()
@@ -312,40 +344,29 @@ void CEC_TV::checkStartupTimeout()
         {
             _turnedOnAt = 0;
             _powerStatus = CEC_POWER_STATUS_ON;
-            DbgPrint("TODO: proper power on check\r\n");
-            broadcastForActiveSource();
-        }
-    }
-    if (_activeSrcBroadcast && millis() - _activeSrcBroadcast >= 10000)//10 sec timeout
-    {
-        //DbgPrint("activesrc triggered (%d): %s\r\n", _activeSrcBroadcast, _activeSrcBroadcastForStandby ? "true" : "false");
-        if (_activeSrcBroadcastForStandby)
-        {
-            _activeSrcBroadcast = 0;
-            powerOff();
-        } else {
-            int switchAddr = (currentInput != -1) ? currentInput << 12 : DEFAULT_INPUT_ADDR;
-            TransmitMsg(0xf, CEC_ROUTING_REQ_PATH, switchAddr >> 8, switchAddr & 0xFF);
-            broadcastForActiveSource(true);
+            Serial.print("TODO: proper power on check\r\n");
+            TransmitMsg(CEC_BROADCAST, 3, CEC_ROUTING_INFO, 0x10, 0);
+            if (active_src1)
+                TransmitMsg(5, 3, CEC_AUDIO_MODE_REQ, active_src1, active_src2);
         }
     }
 }
 
 void CEC_TV::powerOff()
 {
+    while (_powerStatus == CEC_POWER_STATUS_TRANSITION_STANDBY_TO_ON)
+        checkStartupTimeout();
+
     if(_powerStatus == CEC_POWER_STATUS_ON)
     {
-        //sendKoganCode(&irsend, KOGAN_POWER);
-        Wire.beginTransmission(I2C_SLAVE_ADDRESS);
-        Wire.write(TVCOMAND_power);
-        Wire.endTransmission();
+        sendKoganCode(&irsend, KOGAN_POWER);
         _powerStatus = CEC_POWER_STATUS_STANDBY;
-        TransmitMsg(CEC_BROADCAST, CEC_STANDBY);
-        DbgPrint("TODO: proper power off check\r\n");
-        //irrecv.enableIRIn(); // Re-enable receiver
+        TransmitMsg(5, 1, CEC_AUDIO_MODE_REQ);
+        TransmitMsg(CEC_BROADCAST, 1, CEC_STANDBY);
+        TransmitMsg(5, 1, CEC_AUDIO_MODE_REQ);
+        Serial.print("TODO: proper power off check\r\n");
+        irrecv.enableIRIn(); // Re-enable receiver
     }
-    if (_powerStatus == CEC_POWER_STATUS_TRANSITION_STANDBY_TO_ON)
-        DbgPrint("still transitioning!\r\n");
 }
 
 void CEC_TV::powerToggle()
@@ -360,8 +381,8 @@ void CEC_TV::sendUC(unsigned char UCCode)
 {
     if (_sendUCTo)
     {
-        TransmitMsgQ(_sendUCTo, CEC_MENU_UC_PRESSED, UCCode);
-        TransmitMsgQ(_sendUCTo, CEC_MENU_UC_RELEASED);
+        TransmitMsg(_sendUCTo, 2, CEC_MENU_UC_PRESSED, UCCode);
+        TransmitMsg(_sendUCTo, 1, CEC_MENU_UC_RELEASED);
     }
 }
 
@@ -450,13 +471,36 @@ void debugIRCode(decode_results *results) {
 
 void CEC_TV::loop()
 {
-    Run();
-    SendQueued();
+    if (CECSerial->available()){
+        switch (CECSerial->read())
+        {
+        case MESSAGE_REPORT_LOGICAL:
+            _logicalAddress = CECBlockRead();
+            DbgPrint("got logical addr: %d.\r\n", _logicalAddress);
+            TransmitMsg(CEC_BROADCAST, 4, CEC_INFO_PHYS_ADDR, 0, 0, 0);
+            break;
+        case MESSAGE_RECIEVED:
+            byte len = CECBlockRead();
+            if (len < 1) {
+              //error
+              DbgPrint("got bogus len %d.\r\n", len);
+              break;
+            }
+            len--;//remove addr
+            byte address = CECBlockRead();//contains both dst and src!
+            byte* message = (byte*)malloc(len);
+            for (int i = 0; i<len; i++){
+              message[i] = CECBlockRead();
+            }
+            OnReceive(address >> 4, address & 0xF, message, len);
+        }
+    }
     checkStartupTimeout();
     decode_results results;
     if (irrecv.decode(&results)) {
         //#ifdef DEBUG_IRCODES
-        DbgPrint("received something!\r\n");
+        //Serial.print("received something!\r\n");
+        results.value = ~ (1 << results.bits-1);
         Serial.println(results.value, HEX);
         //#endif
         if (results.value == REPEAT){//defined in IRremote.h
@@ -482,36 +526,10 @@ void CEC_TV::loop()
                 delay(250);
                 powerToggle();
                 break;
-            case REMOTE_1:
-                check_remote_protocol
-                delay(250);
-                changeInputI2c(1);
-                break;
-            case REMOTE_2:
-                check_remote_protocol
-                delay(250);
-                changeInputI2c(2);
-                break;
-            case REMOTE_3:
-                check_remote_protocol
-                delay(250);
-                changeInputI2c(3);
-                break;
-            case REMOTE_4:
-                check_remote_protocol
-                delay(250);
-                changeInputI2c(4);
-                break;
-            case REMOTE_0:
-                check_remote_protocol
-                delay(250);
-                currentInput = -1;//reset it
-                changeInputI2c(1);
-                break;
             case REMOTE_GUIDE:
                 check_remote_protocol
                 delay(250);
-                //sendKoganCode(&irsend, KOGAN_ASPECT);
+                sendKoganCode(&irsend, KOGAN_ASPECT);
                 break;
             case REMOTE_UP:
                 check_remote_protocol
@@ -582,4 +600,4 @@ void CEC_TV::loop()
     }
 }
 
-#endif // CEC_TV_H__
+
