@@ -15,6 +15,13 @@
 
 #define DEFAULT_INPUT_ADDR 0x1000
 
+typedef struct logical_device_info {
+char* osd_name,
+cec_power_status power_status,
+cec_physical_address phy_addr,
+cec_version cec_ver,
+} logical_device_info;
+
 class CEC_TV : public CEC_Device
 {
 public:
@@ -40,6 +47,15 @@ public:
   void sendUC(unsigned char UCCode);
 
 protected:
+    logical_device_info devices[0xE];
+    bool RequestAudio(cec_physical_address addr) { return TrasmitMsg(5, 3, CEC_OPCODE_SYSTEM_AUDIO_MODE_REQUEST, split_2_byte(addr)); };
+    bool RequestAudioOff() { return TrasmitMsg(5, 1, CEC_OPCODE_SYSTEM_AUDIO_MODE_REQUEST); };
+    bool SendRemoteCode(cec_logical_address dest, cec_user_control_code code) { return TransmitMsg(dest, 2, CEC_OPCODE_USER_CONTROL_PRESSED, code) && TransmitMsg(dest, 1, CEC_OPCODE_USER_CONTROL_RELEASE); };
+    bool RequestPhyAddr(cec_logical_address dest) { return TransmitMsg(dest, 1, CEC_INFO_REQ_PHYS_ADDR); };
+    bool RequestPwrStatus(cec_logical_address dest) { return TransmitMsg(dest, 1, CEC_POWER_REQ_STATUS); };
+    bool RequestPath(cec_physical_address addr) { return TransmitMsg(CECDEVICE_BROADCAST, 3, CEC_ROUTING_REQ_PATH, split_2_byte(addr)); };
+    bool RequestActive() { return TransmitMsg(CECDEVICE_BROADCAST, 1, CEC_ROUTING_REQ_ACTIVE); };
+
     virtual void OnReceive(int source, int dest, unsigned char* buffer, int count);
 
     byte _powerStatus;
