@@ -699,6 +699,7 @@
 		<Unit filename="Common.cpp" />
 		<Unit filename="Common.h" />
 		<Unit filename="Message_defines.h" />
+		<Unit filename="cec_helpers.h" />
 		<Unit filename="edid.cpp" />
 		<Unit filename="edid.h" />
 		<Extensions>

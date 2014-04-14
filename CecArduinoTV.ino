@@ -1,5 +1,6 @@
 #include "Common.h"
-#include "CEC_Codes.h"
+//#include "CEC_Codes.h"
+#include "cec_helpers.h"
 #include "CEC_TV.h"
 //#include "cli.h"
 
@@ -116,26 +117,25 @@ void loop()
     switch (c)
     {
       case '1':
-        device.TransmitMsg(CEC_BROADCAST, 1, CEC_STANDBY);
+        device.TransmitMsg(CECDEVICE_BROADCAST, 1, CEC_OPCODE_STANDBY);
         break;
       case '2':
-        device.TransmitMsg(5, 1, CEC_INFO_REQ_PHYS_ADDR);
+        device.TransmitMsg(5, 1, CEC_OPCODE_GIVE_PHYSICAL_ADDRESS);
         break;
       case '3':
-        device.TransmitMsg(5, 1, CEC_POWER_REQ_STATUS);
+        device.TransmitMsg(5, 1, CEC_OPCODE_GIVE_DEVICE_POWER_STATUS);
         break;
       /*case 'r':
         device.TransmitMsg(5, CEC_AUDIO_MODE_REQ, 0x11, 0x00);
         break;*/
       case 'u':
-        device.TransmitMsg(5, 2, CEC_MENU_UC_PRESSED, CEC_UC_CODE_VOLUME_UP);
-        device.TransmitMsg(5, 1, CEC_MENU_UC_RELEASED);
+        device.SendRemoteCode((cec_logical_address)5, CEC_USER_CONTROL_CODE_VOLUME_UP);
         break;
       case 'p':
-        device.TransmitMsg(0xf, 3, CEC_ROUTING_REQ_PATH, 0x11, 0x00);
+        device.TransmitMsg(0xf, 3, CEC_OPCODE_SET_STREAM_PATH, 0x11, 0x00);
         break;
       case 'a':
-        device.TransmitMsg(0xf, 1, CEC_ROUTING_REQ_ACTIVE);
+        device.TransmitMsg(0xf, 1, CEC_OPCODE_REQUEST_ACTIVE_SOURCE);
         break;
       case 't':
           {
@@ -150,35 +150,25 @@ void loop()
         DbgPrint("read edid: %d", readEDID());
         break;*/
       case '8':
-        device.TransmitMsg(4, 2, CEC_MENU_UC_PRESSED, CEC_UC_CODE_UP);
-        device.TransmitMsg(4, 1, CEC_MENU_UC_RELEASED);
+        device.SendRemoteCode((cec_logical_address)4, CEC_USER_CONTROL_CODE_UP);
         break;
       case '4':
-        device.TransmitMsg(4, 2, CEC_MENU_UC_PRESSED, CEC_UC_CODE_LEFT);
-        device.TransmitMsg(4, 1, CEC_MENU_UC_RELEASED);
+        device.SendRemoteCode((cec_logical_address)4, CEC_USER_CONTROL_CODE_LEFT);
         break;
       case '6':
-        device.TransmitMsg(4, 2, CEC_MENU_UC_PRESSED, CEC_UC_CODE_RIGHT);
-        device.TransmitMsg(4, 1, CEC_MENU_UC_RELEASED);
+        device.SendRemoteCode((cec_logical_address)4, CEC_USER_CONTROL_CODE_RIGHT);
         break;
       case '5':
-        device.TransmitMsg(4, 2, CEC_MENU_UC_PRESSED, CEC_UC_CODE_DOWN);
-        device.TransmitMsg(4, 1, CEC_MENU_UC_RELEASED);
+        device.SendRemoteCode((cec_logical_address)4, CEC_USER_CONTROL_CODE_DOWN);
         break;
       case 'n':
-        device.TransmitMsg(4, 1, CEC_OSD_REQ_OSD);
+        device.TransmitMsg(4, 1, CEC_OPCODE_GIVE_OSD_NAME);
         break;
       case 'i':
-        device.TransmitMsg(4, 1, CEC_VENDOR_ID_REQ);
+        device.TransmitMsg(4, 1, CEC_OPCODE_GIVE_DEVICE_VENDOR_ID);
         break;
       case 'o':
         device.powerToggle();
-        break;
-      case 'm':
-        device.TransmitMsg(5, 3, CEC_AUDIO_MODE_REQ, 0x14, 0);
-        break;
-      case 'c':
-        device.TransmitMsg(5, 1, CEC_AUDIO_MODE_REQ);
         break;
     }
   }
